@@ -1,1 +1,0 @@
-# rvst_competitie
