@@ -19,10 +19,16 @@
     --yellow-card:#F4C430;
   }
 
+  html{
+    background:var(--ink);
+    color-scheme:dark;
+  }
+
   *{box-sizing:border-box; margin:0; padding:0;}
 
   body{
     background:var(--ink);
+    min-height:100vh;
     color:var(--chalk);
     font-family:'Inter', sans-serif;
     -webkit-font-smoothing:antialiased;
@@ -288,17 +294,278 @@
     color:var(--chalk-dim);
     padding:24px 16px 0;
   }
+
+  /* ---------- AUTH SCREEN ---------- */
+  #auth-screen{
+    min-height:100vh;
+    width:100%;
+    background:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 18px;
+  }
+  .auth-card{
+    width:100%;
+    max-width:380px;
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+    padding:26px 22px 24px;
+  }
+  .auth-title{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    color:var(--chalk);
+    margin-bottom:4px;
+  }
+  .auth-sub{
+    font-size:12.5px;
+    color:var(--chalk-dim);
+    margin-bottom:20px;
+  }
+  .auth-tabs{
+    display:flex;
+    border:1px solid var(--pitch-line);
+    margin-bottom:20px;
+  }
+  .auth-tab{
+    flex:1;
+    background:none;
+    border:none;
+    color:var(--chalk-dim);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    padding:10px 6px;
+    cursor:pointer;
+  }
+  .auth-tab.active{
+    background:var(--amber);
+    color:var(--ink);
+  }
+  .auth-form{ display:none; flex-direction:column; gap:12px; }
+  .auth-form.active{ display:flex; }
+  .field-label{
+    font-size:11.5px;
+    color:var(--chalk-dim);
+    margin-bottom:5px;
+    display:block;
+  }
+  .field-label .req{ color:var(--amber); }
+  .auth-form input[type="text"],
+  .auth-form input[type="date"]{
+    width:100%;
+    background:var(--ink);
+    border:1px solid var(--pitch-line);
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    padding:10px 11px;
+  }
+  .auth-form input:focus{ outline:2px solid var(--amber); outline-offset:1px; }
+  .photo-row{ display:flex; align-items:center; gap:12px; }
+  .photo-preview{
+    width:44px; height:44px;
+    border-radius:50%;
+    background:var(--pitch-mid);
+    border:1px solid var(--pitch-line);
+    object-fit:cover;
+    flex-shrink:0;
+  }
+  .file-btn{
+    font-size:12.5px;
+    color:var(--chalk-dim);
+    background:none;
+    border:1px solid var(--pitch-line);
+    padding:8px 12px;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+  .auth-submit{
+    margin-top:6px;
+    background:var(--amber);
+    color:var(--ink);
+    border:none;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.02em;
+    padding:12px;
+    cursor:pointer;
+  }
+  .auth-error{
+    background:rgba(193,68,60,0.14);
+    border:1px solid var(--red-card);
+    color:#F0A9A3;
+    font-size:12.5px;
+    padding:9px 11px;
+    display:none;
+  }
+  .auth-error.show{ display:block; }
+  .auth-hint{
+    font-size:11px;
+    color:var(--chalk-dim);
+    margin-top:2px;
+  }
+
+  /* ---------- USER BAR ---------- */
+  .user-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--ink);
+    padding:9px 16px;
+    border-bottom:1px solid var(--pitch-line);
+  }
+  .user-bar-left{ display:flex; align-items:center; gap:9px; }
+  .user-avatar{
+    width:28px; height:28px;
+    border-radius:50%;
+    object-fit:cover;
+    background:var(--amber);
+    flex-shrink:0;
+  }
+  .user-avatar-fallback{
+    width:28px; height:28px;
+    border-radius:50%;
+    background:var(--amber);
+    color:var(--ink);
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:11px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .user-info{ font-size:12.5px; line-height:1.35; }
+  .user-info .u-name{ font-weight:600; color:var(--chalk); }
+  .user-info .u-club{ color:var(--chalk-dim); }
+  .logout-btn{
+    background:none;
+    border:1px solid var(--pitch-line);
+    color:var(--chalk-dim);
+    font-size:11.5px;
+    padding:6px 10px;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+
+  /* ---------- MOTION ---------- */
+  @keyframes fadeSlideUp{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes popIn{
+    from{ opacity:0; transform:scale(0.97); }
+    to{ opacity:1; transform:scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+
+  nav button,
+  .auth-tab,
+  .auth-submit,
+  .logout-btn,
+  .file-btn{
+    transition:transform .12s ease, color .15s ease, background-color .15s ease;
+  }
+  nav button:active,
+  .auth-tab:active,
+  .auth-submit:active,
+  .logout-btn:active,
+  .file-btn:active{
+    transform:scale(0.94);
+  }
+
+  .view.active{ animation:fadeSlideUp .28s ease; }
+  .auth-form.active{ animation:fadeSlideUp .22s ease; }
+  .auth-card{ animation:popIn .32s ease; }
+  #app-content.entering{ animation:fadeSlideUp .32s ease; }
 </style>
 </head>
 <body>
+
+<!-- ================= AUTH SCREEN ================= -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-title">Hoofdklasse Dashboard</div>
+    <div class="auth-sub">Log in met je teamaccount, of maak er een aan.</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Inloggen</button>
+      <button class="auth-tab" data-tab="register">Nieuw account</button>
+    </div>
+
+    <div class="auth-error" id="auth-error"></div>
+
+    <!-- LOGIN -->
+    <form class="auth-form active" id="login-form">
+      <div>
+        <label class="field-label">Voornaam <span class="req">*</span></label>
+        <input type="text" id="login-firstname" required>
+      </div>
+      <div>
+        <label class="field-label">Achternaam <span class="req">*</span></label>
+        <input type="text" id="login-lastname" required>
+      </div>
+      <button type="submit" class="auth-submit">Inloggen</button>
+    </form>
+
+    <!-- REGISTER -->
+    <form class="auth-form" id="register-form">
+      <div>
+        <label class="field-label">Voornaam <span class="req">*</span></label>
+        <input type="text" id="reg-firstname" required>
+      </div>
+      <div>
+        <label class="field-label">Achternaam <span class="req">*</span></label>
+        <input type="text" id="reg-lastname" required>
+      </div>
+      <div>
+        <label class="field-label">Geboortedatum <span class="req">*</span></label>
+        <input type="date" id="reg-birthdate" required>
+      </div>
+      <div>
+        <label class="field-label">Club <span class="req">*</span></label>
+        <input type="text" id="reg-club" placeholder="bijv. TOGB" required>
+        <div class="auth-hint">Geldige clubs: TOGB, BVCB, CVV, SoccerBoys (hoofdletters maken niet uit)</div>
+      </div>
+      <div>
+        <label class="field-label">Profielfoto</label>
+        <div class="photo-row">
+          <img class="photo-preview" id="reg-photo-preview" style="display:none;">
+          <button type="button" class="file-btn" id="reg-photo-btn">Foto kiezen</button>
+          <input type="file" id="reg-photo-input" accept="image/*" style="display:none;">
+        </div>
+      </div>
+      <button type="submit" class="auth-submit">Account aanmaken</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= APP CONTENT ================= -->
+<div id="app-content" style="display:none;">
+
+<div class="user-bar">
+  <div class="user-bar-left">
+    <img class="user-avatar" id="user-avatar-img" style="display:none;">
+    <div class="user-avatar-fallback" id="user-avatar-fallback" style="display:none;"></div>
+    <div class="user-info">
+      <div class="u-name" id="user-name-label"></div>
+      <div class="u-club" id="user-club-label"></div>
+    </div>
+  </div>
+  <button class="logout-btn" id="logout-btn">Uitloggen</button>
+</div>
+
 
 <header>
   <div class="header-inner">
     <div class="comp-label">Seizoen 2026/27 · v1.0</div>
     <h1>Hoofdklasse Dashboard</h1>
     <div class="season-row">
-      <span>10 clubs · najaarscompetitie</span>
-      <span class="matchday">SPEELRONDE 9</span>
+      <span>4 clubs · najaarscompetitie</span>
+      <span class="matchday">SPEELRONDE 2</span>
     </div>
   </div>
 </header>
@@ -332,16 +599,16 @@
       </table>
     </div>
     <div class="legend">
-      <span><span class="dot cup"></span>Play-offs promotie</span>
-      <span><span class="dot drop"></span>Degradatiezone</span>
+      <span><span class="dot cup"></span>Koploper</span>
+      <span><span class="dot drop"></span>Hekkensluiter</span>
     </div>
   </div>
 
   <!-- PROGRAMMA -->
   <div class="view" id="programma">
-    <div class="section-heading">Speelronde 8 — uitslagen</div>
+    <div class="section-heading">Speelronde 1 — uitslagen</div>
     <div id="results-list"></div>
-    <div class="section-heading">Speelronde 9 — programma</div>
+    <div class="section-heading">Speelronde 2 — programma</div>
     <div id="upcoming-list"></div>
   </div>
 
@@ -355,45 +622,206 @@
 
 <footer>v1.0 · alle namen, uitslagen en cijfers zijn fictief · voorbeelddashboard</footer>
 
+</div><!-- /#app-content -->
+
+<script>
+  // ==================================================
+  //  AUTHENTICATIE
+  //  Let op: accounts worden lokaal in de browser bewaard
+  //  (localStorage). Dit werkt zodra de pagina op GitHub
+  //  Pages (of elders) live staat. In sommige preview-
+  //  omgevingen kan opslag beperkt of niet-persistent zijn.
+  // ==================================================
+
+  const VALID_CLUBS = ["TOGB", "BVCB", "CVV", "SoccerBoys"];
+
+  function normalizeClub(input) {
+    const clean = (input || "").trim();
+    const match = VALID_CLUBS.find(c => c.toLowerCase() === clean.toLowerCase());
+    return match || null; // geeft de correcte schrijfwijze terug, of null
+  }
+
+  function loadAccounts() {
+    try {
+      return JSON.parse(localStorage.getItem('voetbalAccounts') || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveAccounts(accounts) {
+    try {
+      localStorage.setItem('voetbalAccounts', JSON.stringify(accounts));
+    } catch (e) {
+      console.warn('Kon accounts niet opslaan (opslag mogelijk vol of niet beschikbaar).', e);
+    }
+  }
+  function findAccount(accounts, firstname, lastname) {
+    return accounts.find(a =>
+      a.firstname.toLowerCase() === firstname.trim().toLowerCase() &&
+      a.lastname.toLowerCase() === lastname.trim().toLowerCase()
+    );
+  }
+
+  const authError = document.getElementById('auth-error');
+  function showAuthError(msg) {
+    authError.textContent = msg;
+    authError.classList.add('show');
+  }
+  function clearAuthError() {
+    authError.classList.remove('show');
+    authError.textContent = '';
+  }
+
+  // ---------- TABS ----------
+  document.querySelectorAll('.auth-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab + '-form').classList.add('active');
+      clearAuthError();
+    });
+  });
+
+  // ---------- PROFIELFOTO ----------
+  const photoBtn = document.getElementById('reg-photo-btn');
+  const photoInput = document.getElementById('reg-photo-input');
+  const photoPreview = document.getElementById('reg-photo-preview');
+  let regPhotoDataUrl = null;
+
+  photoBtn.addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', () => {
+    const file = photoInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      regPhotoDataUrl = e.target.result;
+      photoPreview.src = regPhotoDataUrl;
+      photoPreview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---------- REGISTREREN ----------
+  document.getElementById('register-form').addEventListener('submit', e => {
+    e.preventDefault();
+    clearAuthError();
+
+    const firstname = document.getElementById('reg-firstname').value.trim();
+    const lastname  = document.getElementById('reg-lastname').value.trim();
+    const birthdate = document.getElementById('reg-birthdate').value;
+    const clubRaw   = document.getElementById('reg-club').value;
+
+    if (!firstname || !lastname || !birthdate || !clubRaw.trim()) {
+      showAuthError('Vul alle verplichte velden in (voornaam, achternaam, geboortedatum en club).');
+      return;
+    }
+
+    const club = normalizeClub(clubRaw);
+    if (!club) {
+      showAuthError(`"${clubRaw}" is geen geldige club. Kies uit: ${VALID_CLUBS.join(', ')}.`);
+      return;
+    }
+
+    const accounts = loadAccounts();
+    if (findAccount(accounts, firstname, lastname)) {
+      showAuthError('Er bestaat al een account met deze voor- en achternaam. Log in bij "Inloggen".');
+      return;
+    }
+
+    const newAccount = {
+      firstname, lastname, birthdate, club,
+      photo: regPhotoDataUrl || null
+    };
+    accounts.push(newAccount);
+    saveAccounts(accounts);
+    logIn(newAccount);
+  });
+
+  // ---------- INLOGGEN ----------
+  document.getElementById('login-form').addEventListener('submit', e => {
+    e.preventDefault();
+    clearAuthError();
+
+    const firstname = document.getElementById('login-firstname').value.trim();
+    const lastname  = document.getElementById('login-lastname').value.trim();
+
+    if (!firstname || !lastname) {
+      showAuthError('Vul zowel je voornaam als achternaam in.');
+      return;
+    }
+
+    const accounts = loadAccounts();
+    const account = findAccount(accounts, firstname, lastname);
+    if (!account) {
+      showAuthError('Geen account gevonden met deze naam. Maak eerst een nieuw account aan.');
+      return;
+    }
+    logIn(account);
+  });
+
+  // ---------- INLOGGEN AFRONDEN ----------
+  function logIn(account) {
+    document.getElementById('user-name-label').textContent = `${account.firstname} ${account.lastname}`;
+    document.getElementById('user-club-label').textContent = account.club;
+
+    const avatarImg = document.getElementById('user-avatar-img');
+    const avatarFallback = document.getElementById('user-avatar-fallback');
+    if (account.photo) {
+      avatarImg.src = account.photo;
+      avatarImg.style.display = 'block';
+      avatarFallback.style.display = 'none';
+    } else {
+      avatarFallback.textContent = (account.firstname[0] + account.lastname[0]).toUpperCase();
+      avatarFallback.style.display = 'flex';
+      avatarImg.style.display = 'none';
+    }
+
+    document.getElementById('auth-screen').style.display = 'none';
+    const appContent = document.getElementById('app-content');
+    appContent.style.display = 'block';
+    appContent.classList.remove('entering');
+    void appContent.offsetWidth; // reflow, zodat de animatie opnieuw kan starten
+    appContent.classList.add('entering');
+  }
+
+  // ---------- UITLOGGEN ----------
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    document.getElementById('app-content').style.display = 'none';
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('login-form').reset();
+    clearAuthError();
+  });
+</script>
+
 <script>
   // ---------- DATA ----------
   const teams = [
-    { name: "FC Noordwijk",  code: "NDW", color: "#E7B23D", w:6, d:2, l:0, gf:19, ga:6 },
-    { name: "Amstel United", code: "AMU", color: "#4FA3E0", w:6, d:1, l:1, gf:17, ga:8 },
-    { name: "Havenboys",     code: "HVB", color: "#D14E4E", w:5, d:2, l:1, gf:15, ga:9 },
-    { name: "Deltasport",    code: "DLS", color: "#4EA35C", w:4, d:3, l:1, gf:14, ga:10 },
-    { name: "Zuiderkroon",   code: "ZDK", color: "#8B5FBF", w:4, d:1, l:3, gf:12, ga:11 },
-    { name: "Rivierstad",    code: "RVS", color: "#4E9E9E", w:3, d:3, l:2, gf:11, ga:10 },
-    { name: "IJssel FC",     code: "IJS", color: "#C77B3E", w:3, d:1, l:4, gf:10, ga:13 },
-    { name: "Polderveld",    code: "PLV", color: "#7A8B4E", w:2, d:2, l:4, gf:8,  ga:14 },
-    { name: "Bergrode",      code: "BGR", color: "#B0563F", w:1, d:2, l:5, gf:7,  ga:16 },
-    { name: "Wolvendal",     code: "WLV", color: "#6B6F76", w:0, d:1, l:7, gf:5,  ga:21 },
+    { name: "TOGB",       code: "TO", color: "#F4C430", w:0, d:0, l:0, gf:0, ga:0 },
+    { name: "SoccerBoys", code: "SB", color: "#4EA35C", w:0, d:0, l:0, gf:0, ga:0 },
+    { name: "CVV",        code: "CV", color: "#D14E4E", w:0, d:0, l:0, gf:0, ga:0 },
+    { name: "BVCB",       code: "BV", color: "#4FA3E0", w:0, d:0, l:0, gf:0, ga:0 },
   ].map(t => ({...t, pts: t.w*3 + t.d, gd: t.gf - t.ga}))
    .sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
 
   const results = [
-    { home:"FC Noordwijk", away:"Bergrode",    hs:3, as:0 },
-    { home:"Amstel United", away:"Polderveld",  hs:2, as:1 },
-    { home:"Havenboys",    away:"Wolvendal",    hs:4, as:0 },
-    { home:"Rivierstad",   away:"IJssel FC",    hs:1, as:1 },
-    { home:"Deltasport",   away:"Zuiderkroon",  hs:2, as:2 },
+    { home:"TOGB", away:"BVCB",       hs:0, as:0 },
+    { home:"CVV",  away:"SoccerBoys", hs:0, as:0 },
+    { home:"BVCB", away:"CVV",        hs:0, as:0 },
   ];
 
   const upcoming = [
-    { day:"Zaterdag 12 sept · 18:30", home:"Zuiderkroon", away:"FC Noordwijk" },
-    { day:"Zaterdag 12 sept · 20:00", home:"Wolvendal",   away:"Rivierstad" },
-    { day:"Zondag 13 sept · 14:00",   home:"Polderveld",  away:"Havenboys" },
-    { day:"Zondag 13 sept · 14:00",   home:"IJssel FC",   away:"Deltasport" },
-    { day:"Zondag 13 sept · 16:00",   home:"Bergrode",    away:"Amstel United" },
+    { day:"Zaterdag 12 sept · 18:30", home:"TOGB", away:"CVV" },
+    { day:"Zaterdag 12 sept · 20:00", home:"TOGB", away:"SoccerBoys" },
+    { day:"Zondag 13 sept · 14:00",   home:"BVCB", away:"SoccerBoys" },
   ];
 
   const scorers = [
-    { name:"Youssef El Amrani", team:"FC Noordwijk", goals:12 },
-    { name:"Sven Dekker",       team:"Amstel United", goals:10 },
-    { name:"Marco Vellinga",    team:"Havenboys",     goals:9 },
-    { name:"Tijn Bosman",       team:"Deltasport",    goals:8 },
-    { name:"Kenji Straatman",   team:"Zuiderkroon",   goals:7 },
-    { name:"Bram Oudshoorn",    team:"Rivierstad",    goals:6 },
+    { name:"Youssef El Amrani", team:"TOGB",       goals:0 },
+    { name:"Sven Dekker",       team:"SoccerBoys", goals:0 },
+    { name:"Marco Vellinga",    team:"BVCB",       goals:0 },
+    { name:"Tijn Bosman",       team:"CVV",         goals:0 },
+    { name:"Kenji Straatman",   team:"TOGB",       goals:0 },
   ];
 
   const teamColor = name => (teams.find(t => t.name === name) || {}).color || "#888";
@@ -423,8 +851,8 @@
   teams.forEach((t, i) => {
     const pos = i + 1;
     const tr = document.createElement('tr');
-    if (pos <= 2) tr.classList.add('zone-cup');
-    if (pos >= 9) tr.classList.add('zone-drop');
+    if (pos <= 1) tr.classList.add('zone-cup');
+    if (pos >= 4) tr.classList.add('zone-drop');
     tr.innerHTML = `
       <td><span class="pos">${pos}</span></td>
       <td class="team-col">
@@ -507,4 +935,3 @@
 
 </body>
 </html>
-
