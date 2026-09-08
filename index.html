@@ -1,1 +1,510 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hoofdklasse Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --pitch-dark:#0A2E5C;
+    --pitch-mid:#123E77;
+    --pitch-line:#2E5FA0;
+    --chalk:#F3F1E7;
+    --chalk-dim:#B9C6DC;
+    --amber:#F4C430;
+    --ink:#081B33;
+    --red-card:#C1443C;
+    --yellow-card:#F4C430;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  body{
+    background:var(--ink);
+    color:var(--chalk);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+
+  .num{font-family:'Oswald', sans-serif; font-weight:600;}
+
+  /* HEADER */
+  header{
+    background:linear-gradient(180deg, var(--pitch-dark) 0%, var(--pitch-mid) 100%);
+    padding:28px 20px 22px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:2px solid var(--amber);
+  }
+  header::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 46px);
+    pointer-events:none;
+  }
+  .header-inner{position:relative; z-index:1;}
+  .comp-label{
+    font-size:12px;
+    letter-spacing:0.14em;
+    color:var(--chalk-dim);
+    text-transform:uppercase;
+    font-weight:500;
+  }
+  h1{
+    font-family:'Oswald', sans-serif;
+    font-size:32px;
+    font-weight:700;
+    letter-spacing:0.01em;
+    margin-top:4px;
+    color:var(--chalk);
+  }
+  .season-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-top:14px;
+    font-size:13px;
+    color:var(--chalk-dim);
+  }
+  .season-row .matchday{
+    background:var(--amber);
+    color:var(--ink);
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    padding:4px 10px;
+    font-size:13px;
+  }
+
+  /* NAV */
+  nav{
+    display:flex;
+    background:var(--pitch-dark);
+    border-bottom:1px solid var(--pitch-line);
+    position:sticky;
+    top:0;
+    z-index:10;
+    overflow-x:auto;
+  }
+  nav button{
+    flex:1;
+    min-width:100px;
+    background:none;
+    border:none;
+    color:var(--chalk-dim);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:14px 10px;
+    cursor:pointer;
+    position:relative;
+    transition:color .15s ease;
+  }
+  nav button.active{ color:var(--chalk); }
+  nav button.active::after{
+    content:"";
+    position:absolute;
+    left:16%; right:16%; bottom:0;
+    height:3px;
+    background:var(--amber);
+  }
+
+  main{ padding:18px 16px 8px; max-width:720px; margin:0 auto; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  section-title{ }
+  .section-heading{
+    font-family:'Oswald', sans-serif;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--amber);
+    margin:22px 0 10px;
+  }
+  .section-heading:first-child{ margin-top:4px; }
+
+  /* QUICK STATS */
+  .stats-strip{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--pitch-line);
+    border:1px solid var(--pitch-line);
+    margin-bottom:22px;
+  }
+  .stat-cell{
+    background:var(--pitch-dark);
+    padding:14px 10px;
+    text-align:center;
+  }
+  .stat-value{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    color:var(--amber);
+  }
+  .stat-label{
+    font-size:10.5px;
+    color:var(--chalk-dim);
+    margin-top:3px;
+    letter-spacing:0.02em;
+  }
+
+  /* STANDINGS TABLE */
+  .table-wrap{
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+  }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  thead th{
+    text-align:center;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    color:var(--chalk-dim);
+    font-size:11px;
+    padding:9px 4px;
+    border-bottom:1px solid var(--pitch-line);
+  }
+  thead th.team-col{ text-align:left; padding-left:12px; }
+  tbody td{
+    text-align:center;
+    padding:9px 4px;
+    color:var(--chalk);
+    border-bottom:1px solid rgba(46,115,80,0.35);
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.team-col{
+    text-align:left;
+    padding-left:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:500;
+  }
+  .pos{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    width:18px;
+    display:inline-block;
+    text-align:center;
+    color:var(--chalk-dim);
+  }
+  tr.zone-cup .pos{ color:var(--amber); }
+  tr.zone-cup{ box-shadow: inset 3px 0 0 var(--amber); }
+  tr.zone-drop{ box-shadow: inset 3px 0 0 var(--red-card); }
+  td.pts{ font-family:'Oswald',sans-serif; font-weight:700; color:var(--amber); }
+  .crest{
+    width:20px; height:20px;
+    border-radius:2px;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald',sans-serif;
+    font-size:9px; font-weight:700;
+    color:var(--ink);
+  }
+  .legend{
+    display:flex; gap:16px; margin-top:10px; font-size:11px; color:var(--chalk-dim);
+    flex-wrap:wrap;
+  }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+  .dot{ width:8px; height:8px; display:inline-block; }
+  .dot.cup{ background:var(--amber); }
+  .dot.drop{ background:var(--red-card); }
+
+  /* FIXTURES */
+  .fixture-day{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--chalk-dim);
+    margin:16px 0 8px;
+  }
+  .fixture-day:first-of-type{ margin-top:0; }
+  .fixture{
+    display:grid;
+    grid-template-columns:1fr 56px 1fr;
+    align-items:center;
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+    padding:12px 10px;
+    margin-bottom:6px;
+    font-size:13px;
+    gap:6px;
+  }
+  .fixture .home{ text-align:right; font-weight:500; }
+  .fixture .away{ text-align:left; font-weight:500; }
+  .fixture .score{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    text-align:center;
+    font-size:15px;
+    color:var(--amber);
+  }
+  .fixture .score.tbd{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12px;
+    color:var(--chalk-dim);
+  }
+
+  /* TOPSCORERS */
+  .scorer-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 4px;
+    border-bottom:1px solid rgba(46,115,80,0.35);
+  }
+  .scorer-row:first-child{ padding-top:0; }
+  .scorer-rank{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    width:24px;
+    color:var(--chalk-dim);
+  }
+  .scorer-row:nth-child(1) .scorer-rank{ color:var(--amber); }
+  .scorer-info{ flex:1; }
+  .scorer-name{ font-weight:600; font-size:14px; }
+  .scorer-team{ font-size:12px; color:var(--chalk-dim); margin-top:1px; }
+  .scorer-goals{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--amber);
+  }
+  .goal-bar-track{
+    height:4px; background:rgba(255,255,255,0.08); margin-top:8px; overflow:hidden;
+  }
+  .goal-bar-fill{ height:100%; background:var(--amber); }
+
+  footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--chalk-dim);
+    padding:24px 16px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="comp-label">Seizoen 2026/27 · v1.0</div>
+    <h1>Hoofdklasse Dashboard</h1>
+    <div class="season-row">
+      <span>10 clubs · najaarscompetitie</span>
+      <span class="matchday">SPEELRONDE 9</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <button class="active" data-view="stand">Stand</button>
+  <button data-view="programma">Programma</button>
+  <button data-view="topscorers">Topscorers</button>
+</nav>
+
+<main>
+
+  <!-- STAND -->
+  <div class="view active" id="stand">
+    <div class="stats-strip" id="stats-strip"></div>
+    <div class="section-heading">Ranglijst</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th class="team-col">Club</th>
+            <th>W</th>
+            <th>G</th>
+            <th>V</th>
+            <th>DS</th>
+            <th>Pt</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <span><span class="dot cup"></span>Play-offs promotie</span>
+      <span><span class="dot drop"></span>Degradatiezone</span>
+    </div>
+  </div>
+
+  <!-- PROGRAMMA -->
+  <div class="view" id="programma">
+    <div class="section-heading">Speelronde 8 — uitslagen</div>
+    <div id="results-list"></div>
+    <div class="section-heading">Speelronde 9 — programma</div>
+    <div id="upcoming-list"></div>
+  </div>
+
+  <!-- TOPSCORERS -->
+  <div class="view" id="topscorers">
+    <div class="section-heading">Topscorers</div>
+    <div id="scorers-list"></div>
+  </div>
+
+</main>
+
+<footer>v1.0 · alle namen, uitslagen en cijfers zijn fictief · voorbeelddashboard</footer>
+
+<script>
+  // ---------- DATA ----------
+  const teams = [
+    { name: "FC Noordwijk",  code: "NDW", color: "#E7B23D", w:6, d:2, l:0, gf:19, ga:6 },
+    { name: "Amstel United", code: "AMU", color: "#4FA3E0", w:6, d:1, l:1, gf:17, ga:8 },
+    { name: "Havenboys",     code: "HVB", color: "#D14E4E", w:5, d:2, l:1, gf:15, ga:9 },
+    { name: "Deltasport",    code: "DLS", color: "#4EA35C", w:4, d:3, l:1, gf:14, ga:10 },
+    { name: "Zuiderkroon",   code: "ZDK", color: "#8B5FBF", w:4, d:1, l:3, gf:12, ga:11 },
+    { name: "Rivierstad",    code: "RVS", color: "#4E9E9E", w:3, d:3, l:2, gf:11, ga:10 },
+    { name: "IJssel FC",     code: "IJS", color: "#C77B3E", w:3, d:1, l:4, gf:10, ga:13 },
+    { name: "Polderveld",    code: "PLV", color: "#7A8B4E", w:2, d:2, l:4, gf:8,  ga:14 },
+    { name: "Bergrode",      code: "BGR", color: "#B0563F", w:1, d:2, l:5, gf:7,  ga:16 },
+    { name: "Wolvendal",     code: "WLV", color: "#6B6F76", w:0, d:1, l:7, gf:5,  ga:21 },
+  ].map(t => ({...t, pts: t.w*3 + t.d, gd: t.gf - t.ga}))
+   .sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+
+  const results = [
+    { home:"FC Noordwijk", away:"Bergrode",    hs:3, as:0 },
+    { home:"Amstel United", away:"Polderveld",  hs:2, as:1 },
+    { home:"Havenboys",    away:"Wolvendal",    hs:4, as:0 },
+    { home:"Rivierstad",   away:"IJssel FC",    hs:1, as:1 },
+    { home:"Deltasport",   away:"Zuiderkroon",  hs:2, as:2 },
+  ];
+
+  const upcoming = [
+    { day:"Zaterdag 12 sept · 18:30", home:"Zuiderkroon", away:"FC Noordwijk" },
+    { day:"Zaterdag 12 sept · 20:00", home:"Wolvendal",   away:"Rivierstad" },
+    { day:"Zondag 13 sept · 14:00",   home:"Polderveld",  away:"Havenboys" },
+    { day:"Zondag 13 sept · 14:00",   home:"IJssel FC",   away:"Deltasport" },
+    { day:"Zondag 13 sept · 16:00",   home:"Bergrode",    away:"Amstel United" },
+  ];
+
+  const scorers = [
+    { name:"Youssef El Amrani", team:"FC Noordwijk", goals:12 },
+    { name:"Sven Dekker",       team:"Amstel United", goals:10 },
+    { name:"Marco Vellinga",    team:"Havenboys",     goals:9 },
+    { name:"Tijn Bosman",       team:"Deltasport",    goals:8 },
+    { name:"Kenji Straatman",   team:"Zuiderkroon",   goals:7 },
+    { name:"Bram Oudshoorn",    team:"Rivierstad",    goals:6 },
+  ];
+
+  const teamColor = name => (teams.find(t => t.name === name) || {}).color || "#888";
+  const teamCode  = name => (teams.find(t => t.name === name) || {}).code || "???";
+
+  // ---------- RENDER QUICK STATS ----------
+  const gamesPlayed = teams.reduce((sum, t) => sum + t.w + t.d + t.l, 0) / 2;
+  const totalGoals = teams.reduce((sum, t) => sum + t.gf, 0);
+  const avgGoals = (totalGoals / gamesPlayed).toFixed(1);
+  document.getElementById('stats-strip').innerHTML = `
+    <div class="stat-cell">
+      <div class="stat-value">${gamesPlayed}</div>
+      <div class="stat-label">Wedstrijden</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">${totalGoals}</div>
+      <div class="stat-label">Goals totaal</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value">${avgGoals}</div>
+      <div class="stat-label">Gem. per duel</div>
+    </div>
+  `;
+
+  // ---------- RENDER STANDINGS ----------
+  const standingsBody = document.getElementById('standings-body');
+  teams.forEach((t, i) => {
+    const pos = i + 1;
+    const tr = document.createElement('tr');
+    if (pos <= 2) tr.classList.add('zone-cup');
+    if (pos >= 9) tr.classList.add('zone-drop');
+    tr.innerHTML = `
+      <td><span class="pos">${pos}</span></td>
+      <td class="team-col">
+        <span class="crest" style="background:${t.color}">${t.code.slice(0,2)}</span>
+        ${t.name}
+      </td>
+      <td>${t.w}</td>
+      <td>${t.d}</td>
+      <td>${t.l}</td>
+      <td>${t.gd > 0 ? '+' + t.gd : t.gd}</td>
+      <td class="pts">${t.pts}</td>
+    `;
+    standingsBody.appendChild(tr);
+  });
+
+  // ---------- RENDER RESULTS ----------
+  const resultsList = document.getElementById('results-list');
+  results.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'fixture';
+    div.innerHTML = `
+      <span class="home">${r.home}</span>
+      <span class="score">${r.hs} – ${r.as}</span>
+      <span class="away">${r.away}</span>
+    `;
+    resultsList.appendChild(div);
+  });
+
+  // ---------- RENDER UPCOMING ----------
+  const upcomingList = document.getElementById('upcoming-list');
+  let lastDay = "";
+  upcoming.forEach(u => {
+    if (u.day !== lastDay) {
+      const dayLabel = document.createElement('div');
+      dayLabel.className = 'fixture-day';
+      dayLabel.textContent = u.day;
+      upcomingList.appendChild(dayLabel);
+      lastDay = u.day;
+    }
+    const div = document.createElement('div');
+    div.className = 'fixture';
+    div.innerHTML = `
+      <span class="home">${u.home}</span>
+      <span class="score tbd">VS</span>
+      <span class="away">${u.away}</span>
+    `;
+    upcomingList.appendChild(div);
+  });
+
+  // ---------- RENDER SCORERS ----------
+  const scorersList = document.getElementById('scorers-list');
+  const maxGoals = Math.max(...scorers.map(s => s.goals));
+  scorers.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'scorer-row';
+    div.style.flexWrap = 'wrap';
+    div.innerHTML = `
+      <span class="scorer-rank">${i+1}</span>
+      <span class="crest" style="background:${teamColor(s.team)}">${teamCode(s.team).slice(0,2)}</span>
+      <span class="scorer-info">
+        <div class="scorer-name">${s.name}</div>
+        <div class="scorer-team">${s.team}</div>
+        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${(s.goals/maxGoals*100).toFixed(0)}%"></div></div>
+      </span>
+      <span class="scorer-goals">${s.goals}</span>
+    `;
+    scorersList.appendChild(div);
+  });
+
+  // ---------- NAV ----------
+  document.querySelectorAll('nav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.view).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
 
