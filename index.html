@@ -850,7 +850,9 @@
   });
 
   // ---------- INLOGGEN AFRONDEN ----------
-  function logIn(account) {
+  const SESSION_KEY = 'voetbalSession';
+
+  function logIn(account, remember = true) {
     document.getElementById('user-name-label').textContent = `${account.firstname} ${account.lastname}`;
     document.getElementById('user-club-label').textContent = account.club;
 
@@ -866,6 +868,21 @@
       avatarImg.style.display = 'none';
     }
 
+    // Sessie lokaal bewaren, zodat een volgend bezoek meteen inlogt
+    if (remember) {
+      try {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({
+          firstname: account.firstname,
+          lastname: account.lastname,
+          birthdate: account.birthdate,
+          club: account.club,
+          photo: account.photo || null
+        }));
+      } catch (err) {
+        console.warn('Kon sessie niet lokaal opslaan.', err);
+      }
+    }
+
     document.getElementById('auth-screen').style.display = 'none';
     const appContent = document.getElementById('app-content');
     appContent.style.display = 'block';
@@ -874,13 +891,27 @@
     appContent.classList.add('entering');
   }
 
+  // ---------- AUTOMATISCH INLOGGEN BIJ TERUGKEER ----------
+  (function tryAutoLogin() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+      if (saved && saved.firstname && saved.lastname && saved.club) {
+        logIn(saved, false); // niet opnieuw wegschrijven, staat al lokaal
+      }
+    } catch (err) {
+      console.warn('Kon vorige sessie niet herstellen.', err);
+    }
+  })();
+
   // ---------- UITLOGGEN ----------
   document.getElementById('logout-btn').addEventListener('click', () => {
+    try { localStorage.removeItem(SESSION_KEY); } catch (err) {}
     document.getElementById('app-content').style.display = 'none';
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('login-form').reset();
     clearAuthError();
   });
+
 
   // ---------- LEDENLIJST (live, iedereen die een account heeft) ----------
   const ledenList = document.getElementById('leden-list');
@@ -1069,4 +1100,3 @@
 
 </body>
 </html>
-
