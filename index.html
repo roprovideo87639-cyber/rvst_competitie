@@ -52,6 +52,15 @@
     background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 46px);
     pointer-events:none;
   }
+  header::after{
+    content:"";
+    position:absolute;
+    top:-60%; left:50%;
+    width:340px; height:340px;
+    transform:translateX(-50%);
+    background:radial-gradient(circle, rgba(244,196,48,0.16) 0%, rgba(244,196,48,0) 70%);
+    pointer-events:none;
+  }
   .header-inner{position:relative; z-index:1;}
   .comp-label{
     font-size:12px;
@@ -83,6 +92,20 @@
     font-weight:600;
     padding:4px 10px;
     font-size:13px;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    box-shadow:0 0 14px rgba(244,196,48,0.35);
+  }
+  .live-dot{
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--ink);
+    animation:pulseDot 1.6s ease-in-out infinite;
+  }
+  @keyframes pulseDot{
+    0%, 100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:0.35; transform:scale(0.7); }
   }
 
   /* NAV */
@@ -98,7 +121,10 @@
   nav button{
     flex:1;
     min-width:100px;
-    background:none;
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    background-color:transparent;
     border:none;
     color:var(--chalk-dim);
     font-family:'Inter',sans-serif;
@@ -203,14 +229,16 @@
   tr.zone-cup{ box-shadow: inset 3px 0 0 var(--amber); }
   tr.zone-drop{ box-shadow: inset 3px 0 0 var(--red-card); }
   td.pts{ font-family:'Oswald',sans-serif; font-weight:700; color:var(--amber); }
+  tr.zone-cup td.pts{ text-shadow:0 0 10px rgba(244,196,48,0.7); }
   .crest{
-    width:20px; height:20px;
-    border-radius:2px;
+    width:22px; height:24px;
     flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
     font-family:'Oswald',sans-serif;
     font-size:9px; font-weight:700;
     color:var(--ink);
+    clip-path:polygon(50% 0%, 100% 18%, 100% 65%, 50% 100%, 0% 65%, 0% 18%);
+    box-shadow:0 1px 3px rgba(0,0,0,0.35);
   }
   .legend{
     display:flex; gap:16px; margin-top:10px; font-size:11px; color:var(--chalk-dim);
@@ -240,7 +268,9 @@
     margin-bottom:6px;
     font-size:13px;
     gap:6px;
+    transition:border-color .15s ease, transform .12s ease;
   }
+  .fixture:active{ transform:scale(0.98); border-color:var(--amber); }
   .fixture .home{ text-align:right; font-weight:500; }
   .fixture .away{ text-align:left; font-weight:500; }
   .fixture .score{
@@ -264,7 +294,9 @@
     gap:12px;
     padding:11px 4px;
     border-bottom:1px solid rgba(46,115,80,0.35);
+    transition:transform .12s ease, background-color .15s ease;
   }
+  .scorer-row:active{ transform:scale(0.98); background-color:rgba(244,196,48,0.06); }
   .scorer-row:first-child{ padding-top:0; }
   .scorer-rank{
     font-family:'Oswald',sans-serif;
@@ -286,7 +318,7 @@
   .goal-bar-track{
     height:4px; background:rgba(255,255,255,0.08); margin-top:8px; overflow:hidden;
   }
-  .goal-bar-fill{ height:100%; background:var(--amber); }
+  .goal-bar-fill{ height:100%; background:linear-gradient(90deg, var(--pitch-line), var(--amber)); }
 
   footer{
     text-align:center;
@@ -331,7 +363,10 @@
   }
   .auth-tab{
     flex:1;
-    background:none;
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    background-color:transparent;
     border:none;
     color:var(--chalk-dim);
     font-family:'Inter',sans-serif;
@@ -356,7 +391,10 @@
   .auth-form input[type="text"],
   .auth-form input[type="date"]{
     width:100%;
+    appearance:none;
+    -webkit-appearance:none;
     background:var(--ink);
+    background-color:var(--ink);
     border:1px solid var(--pitch-line);
     color:var(--chalk);
     font-family:'Inter',sans-serif;
@@ -376,7 +414,10 @@
   .file-btn{
     font-size:12.5px;
     color:var(--chalk-dim);
-    background:none;
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    background-color:transparent;
     border:1px solid var(--pitch-line);
     padding:8px 12px;
     cursor:pointer;
@@ -440,7 +481,10 @@
   .user-info .u-name{ font-weight:600; color:var(--chalk); }
   .user-info .u-club{ color:var(--chalk-dim); }
   .logout-btn{
-    background:none;
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    background-color:transparent;
     border:1px solid var(--pitch-line);
     color:var(--chalk-dim);
     font-size:11.5px;
@@ -561,11 +605,11 @@
 
 <header>
   <div class="header-inner">
-    <div class="comp-label">Seizoen 2026/27</div>
+    <div class="comp-label">Seizoen 2026/27 · Bèta v12</div>
     <h1>3B Street Cup</h1>
     <div class="season-row">
       <span>4 clubs · najaarscompetitie</span>
-      <span class="matchday">SPEELRONDE 2</span>
+      <span class="matchday"><span class="live-dot"></span>SPEELRONDE 2</span>
     </div>
   </div>
 </header>
@@ -574,6 +618,7 @@
   <button class="active" data-view="stand">Stand</button>
   <button data-view="programma">Programma</button>
   <button data-view="topscorers">Topscorers</button>
+  <button data-view="leden">Leden</button>
 </nav>
 
 <main>
@@ -618,48 +663,52 @@
     <div id="scorers-list"></div>
   </div>
 
+  <!-- LEDEN -->
+  <div class="view" id="leden">
+    <div class="section-heading">Alle leden</div>
+    <div id="leden-list"></div>
+  </div>
+
 </main>
 
-<footer>v1.0 · alle namen, uitslagen en cijfers zijn fictief · voorbeelddashboard</footer>
+<footer>Bèta v12 · alle namen, uitslagen en cijfers zijn fictief · voorbeelddashboard</footer>
 
 </div><!-- /#app-content -->
 
-<script>
+<script type="module">
   // ==================================================
-  //  AUTHENTICATIE
-  //  Let op: accounts worden lokaal in de browser bewaard
-  //  (localStorage). Dit werkt zodra de pagina op GitHub
-  //  Pages (of elders) live staat. In sommige preview-
-  //  omgevingen kan opslag beperkt of niet-persistent zijn.
+  //  AUTHENTICATIE — Firebase Firestore
+  //  Accounts worden nu centraal opgeslagen, zichtbaar
+  //  voor iedereen die de site bezoekt (niet meer per
+  //  apparaat/browser zoals bij localStorage).
   // ==================================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, query, where,
+    onSnapshot, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAW-X3XYChG5AFwsXg8WNeL9wiMkonVaoc",
+    authDomain: "b-street-cup.firebaseapp.com",
+    projectId: "b-street-cup",
+    storageBucket: "b-street-cup.firebasestorage.app",
+    messagingSenderId: "476783560837",
+    appId: "1:476783560837:web:87ea8ffe7bc8e44ca441ec",
+    measurementId: "G-5VJHKWL2SG"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const accountsCol = collection(db, 'accounts');
 
   const VALID_CLUBS = ["TOGB", "BVCB", "CVV", "SoccerBoys"];
+  const MAX_PHOTO_CHARS = 700 * 1024; // ruwe veiligheidsgrens voor Firestore-documentgrootte
 
   function normalizeClub(input) {
     const clean = (input || "").trim();
     const match = VALID_CLUBS.find(c => c.toLowerCase() === clean.toLowerCase());
     return match || null; // geeft de correcte schrijfwijze terug, of null
-  }
-
-  function loadAccounts() {
-    try {
-      return JSON.parse(localStorage.getItem('voetbalAccounts') || '[]');
-    } catch (e) {
-      return [];
-    }
-  }
-  function saveAccounts(accounts) {
-    try {
-      localStorage.setItem('voetbalAccounts', JSON.stringify(accounts));
-    } catch (e) {
-      console.warn('Kon accounts niet opslaan (opslag mogelijk vol of niet beschikbaar).', e);
-    }
-  }
-  function findAccount(accounts, firstname, lastname) {
-    return accounts.find(a =>
-      a.firstname.toLowerCase() === firstname.trim().toLowerCase() &&
-      a.lastname.toLowerCase() === lastname.trim().toLowerCase()
-    );
   }
 
   const authError = document.getElementById('auth-error');
@@ -703,7 +752,7 @@
   });
 
   // ---------- REGISTREREN ----------
-  document.getElementById('register-form').addEventListener('submit', e => {
+  document.getElementById('register-form').addEventListener('submit', async e => {
     e.preventDefault();
     clearAuthError();
 
@@ -723,23 +772,48 @@
       return;
     }
 
-    const accounts = loadAccounts();
-    if (findAccount(accounts, firstname, lastname)) {
-      showAuthError('Er bestaat al een account met deze voor- en achternaam. Log in bij "Inloggen".');
+    if (regPhotoDataUrl && regPhotoDataUrl.length > MAX_PHOTO_CHARS) {
+      showAuthError('Deze profielfoto is te groot. Kies een kleiner bestand.');
       return;
     }
 
-    const newAccount = {
-      firstname, lastname, birthdate, club,
-      photo: regPhotoDataUrl || null
-    };
-    accounts.push(newAccount);
-    saveAccounts(accounts);
-    logIn(newAccount);
+    const firstnameLower = firstname.toLowerCase();
+    const lastnameLower  = lastname.toLowerCase();
+
+    const submitBtn = e.target.querySelector('.auth-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Bezig...';
+
+    try {
+      const dupSnap = await getDocs(query(
+        accountsCol,
+        where('firstnameLower', '==', firstnameLower),
+        where('lastnameLower', '==', lastnameLower)
+      ));
+      if (!dupSnap.empty) {
+        showAuthError('Er bestaat al een account met deze voor- en achternaam. Log in bij "Inloggen".');
+        return;
+      }
+
+      const newAccount = {
+        firstname, lastname, firstnameLower, lastnameLower,
+        birthdate, club,
+        photo: regPhotoDataUrl || null,
+        createdAt: serverTimestamp()
+      };
+      await addDoc(accountsCol, newAccount);
+      logIn(newAccount);
+    } catch (err) {
+      console.error(err);
+      showAuthError('Kon geen verbinding maken met de database. Probeer het opnieuw.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Account aanmaken';
+    }
   });
 
   // ---------- INLOGGEN ----------
-  document.getElementById('login-form').addEventListener('submit', e => {
+  document.getElementById('login-form').addEventListener('submit', async e => {
     e.preventDefault();
     clearAuthError();
 
@@ -751,13 +825,28 @@
       return;
     }
 
-    const accounts = loadAccounts();
-    const account = findAccount(accounts, firstname, lastname);
-    if (!account) {
-      showAuthError('Geen account gevonden met deze naam. Maak eerst een nieuw account aan.');
-      return;
+    const submitBtn = e.target.querySelector('.auth-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Bezig...';
+
+    try {
+      const snap = await getDocs(query(
+        accountsCol,
+        where('firstnameLower', '==', firstname.toLowerCase()),
+        where('lastnameLower', '==', lastname.toLowerCase())
+      ));
+      if (snap.empty) {
+        showAuthError('Geen account gevonden met deze naam. Maak eerst een nieuw account aan.');
+        return;
+      }
+      logIn(snap.docs[0].data());
+    } catch (err) {
+      console.error(err);
+      showAuthError('Kon geen verbinding maken met de database. Probeer het opnieuw.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Inloggen';
     }
-    logIn(account);
   });
 
   // ---------- INLOGGEN AFRONDEN ----------
@@ -791,6 +880,35 @@
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('login-form').reset();
     clearAuthError();
+  });
+
+  // ---------- LEDENLIJST (live, iedereen die een account heeft) ----------
+  const ledenList = document.getElementById('leden-list');
+  onSnapshot(query(accountsCol, orderBy('createdAt', 'asc')), snapshot => {
+    if (snapshot.empty) {
+      ledenList.innerHTML = '<div class="auth-hint">Nog geen leden geregistreerd.</div>';
+      return;
+    }
+    ledenList.innerHTML = '';
+    snapshot.forEach(doc => {
+      const a = doc.data();
+      const row = document.createElement('div');
+      row.className = 'scorer-row';
+      const initials = ((a.firstname?.[0] || '') + (a.lastname?.[0] || '')).toUpperCase();
+      row.innerHTML = `
+        ${a.photo
+          ? `<img class="user-avatar" style="width:32px;height:32px;" src="${a.photo}">`
+          : `<div class="user-avatar-fallback" style="width:32px;height:32px;">${initials}</div>`}
+        <span class="scorer-info">
+          <div class="scorer-name">${a.firstname} ${a.lastname}</div>
+          <div class="scorer-team">${a.club}</div>
+        </span>
+      `;
+      ledenList.appendChild(row);
+    });
+  }, err => {
+    console.error(err);
+    ledenList.innerHTML = '<div class="auth-hint">Kon ledenlijst niet laden.</div>';
   });
 </script>
 
@@ -833,18 +951,34 @@
   const avgGoals = (totalGoals / gamesPlayed).toFixed(1);
   document.getElementById('stats-strip').innerHTML = `
     <div class="stat-cell">
-      <div class="stat-value">${gamesPlayed}</div>
+      <div class="stat-value" data-target="${gamesPlayed}" id="stat-games">0</div>
       <div class="stat-label">Wedstrijden</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-value">${totalGoals}</div>
+      <div class="stat-value" data-target="${totalGoals}" id="stat-goals">0</div>
       <div class="stat-label">Goals totaal</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-value">${avgGoals}</div>
+      <div class="stat-value" id="stat-avg">0.0</div>
       <div class="stat-label">Gem. per duel</div>
     </div>
   `;
+
+  function countUp(el, target, decimals = 0, duration = 700) {
+    const start = performance.now();
+    function tick(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = target * eased;
+      el.textContent = decimals ? value.toFixed(decimals) : Math.round(value);
+      if (progress < 1) requestAnimationFrame(tick);
+      else el.textContent = decimals ? target.toFixed(decimals) : target;
+    }
+    requestAnimationFrame(tick);
+  }
+  countUp(document.getElementById('stat-games'), gamesPlayed, 0);
+  countUp(document.getElementById('stat-goals'), totalGoals, 0);
+  countUp(document.getElementById('stat-avg'), parseFloat(avgGoals), 1);
 
   // ---------- RENDER STANDINGS ----------
   const standingsBody = document.getElementById('standings-body');
@@ -935,3 +1069,4 @@
 
 </body>
 </html>
+
