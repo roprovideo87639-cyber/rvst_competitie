@@ -389,6 +389,7 @@
   }
   .field-label .req{ color:var(--amber); }
   .auth-form input[type="text"],
+  .auth-form input[type="email"],
   .auth-form input[type="date"]{
     width:100%;
     appearance:none;
@@ -529,6 +530,41 @@
 </head>
 <body>
 
+<script>
+  // ==================================================
+  //  GELUIDSEFFECTEN — korte, subtiele klik via Web Audio
+  //  (geen los geluidsbestand, dus geen kans op ratelend/
+  //  ruw geluid; puur een korte gedempte toon)
+  // ==================================================
+  let __audioCtx = null;
+  function getAudioCtx() {
+    if (!__audioCtx) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      __audioCtx = new Ctx();
+    }
+    if (__audioCtx.state === 'suspended') __audioCtx.resume();
+    return __audioCtx;
+  }
+  function playClickSound(freq = 680, duration = 0.06, volume = 0.10) {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.62, ctx.currentTime + duration);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + 0.007);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration + 0.02);
+  }
+  window.playClickSound = playClickSound;
+</script>
+
 <!-- ================= AUTH SCREEN ================= -->
 <div id="auth-screen">
   <div class="auth-card">
@@ -564,6 +600,10 @@
       <div>
         <label class="field-label">Achternaam <span class="req">*</span></label>
         <input type="text" id="reg-lastname" required>
+      </div>
+      <div>
+        <label class="field-label">E-mailadres <span class="req">*</span></label>
+        <input type="email" id="reg-email" placeholder="naam@voorbeeld.nl" required>
       </div>
       <div>
         <label class="field-label">Geboortedatum <span class="req">*</span></label>
@@ -675,6 +715,7 @@
 
 </div><!-- /#app-content -->
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module">
   // ==================================================
   //  AUTHENTICATIE — Firebase Firestore
@@ -724,6 +765,7 @@
   // ---------- TABS ----------
   document.querySelectorAll('.auth-tab').forEach(tab => {
     tab.addEventListener('click', () => {
+      playClickSound();
       document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
       tab.classList.add('active');
@@ -738,7 +780,7 @@
   const photoPreview = document.getElementById('reg-photo-preview');
   let regPhotoDataUrl = null;
 
-  photoBtn.addEventListener('click', () => photoInput.click());
+  photoBtn.addEventListener('click', () => { playClickSound(560, 0.05, 0.08); photoInput.click(); });
   photoInput.addEventListener('change', () => {
     const file = photoInput.files[0];
     if (!file) return;
@@ -755,14 +797,22 @@
   document.getElementById('register-form').addEventListener('submit', async e => {
     e.preventDefault();
     clearAuthError();
+    playClickSound();
 
     const firstname = document.getElementById('reg-firstname').value.trim();
     const lastname  = document.getElementById('reg-lastname').value.trim();
+    const email     = document.getElementById('reg-email').value.trim();
     const birthdate = document.getElementById('reg-birthdate').value;
     const clubRaw   = document.getElementById('reg-club').value;
 
-    if (!firstname || !lastname || !birthdate || !clubRaw.trim()) {
-      showAuthError('Vul alle verplichte velden in (voornaam, achternaam, geboortedatum en club).');
+    if (!firstname || !lastname || !email || !birthdate || !clubRaw.trim()) {
+      showAuthError('Vul alle verplichte velden in (voornaam, achternaam, e-mailadres, geboortedatum en club).');
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      showAuthError('Vul een geldig e-mailadres in.');
       return;
     }
 
@@ -797,11 +847,12 @@
 
       const newAccount = {
         firstname, lastname, firstnameLower, lastnameLower,
-        birthdate, club,
+        email, birthdate, club,
         photo: regPhotoDataUrl || null,
         createdAt: serverTimestamp()
       };
       await addDoc(accountsCol, newAccount);
+      sendWelcomeEmail(newAccount); // stuurt pas echt zodra EmailJS is gekoppeld, zie comments hieronder
       logIn(newAccount);
     } catch (err) {
       console.error(err);
@@ -812,10 +863,37 @@
     }
   });
 
+  // ==================================================
+  //  WELKOMSTMAIL — nog niet actief
+  //  Een los HTML-bestand kan zelf geen mail versturen;
+  //  daarvoor is een gratis mailservice als EmailJS nodig
+  //  (werkt zonder eigen server). Stappen om dit te activeren:
+  //   1. Maak een gratis account op emailjs.com
+  //   2. Koppel je e-mailadres (Gmail/Outlook/etc.) als "Service"
+  //   3. Maak een "Email Template" met de welkomsttekst
+  //      (gebruik daarin bijv. {{to_name}}, {{to_email}}, {{club}})
+  //   4. Geef mij: Service ID, Template ID, Public Key
+  //   5. Ik vul ze hieronder in en zet EMAILJS_ENABLED op true
+  // ==================================================
+  const EMAILJS_ENABLED = false;
+  const EMAILJS_SERVICE_ID = 'JOUW_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ID = 'JOUW_TEMPLATE_ID';
+  const EMAILJS_PUBLIC_KEY = 'JOUW_PUBLIC_KEY';
+
+  function sendWelcomeEmail(account) {
+    if (!EMAILJS_ENABLED || typeof emailjs === 'undefined') return;
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_name: `${account.firstname} ${account.lastname}`,
+      to_email: account.email,
+      club: account.club
+    }, EMAILJS_PUBLIC_KEY).catch(err => console.error('Welkomstmail versturen mislukt:', err));
+  }
+
   // ---------- INLOGGEN ----------
   document.getElementById('login-form').addEventListener('submit', async e => {
     e.preventDefault();
     clearAuthError();
+    playClickSound();
 
     const firstname = document.getElementById('login-firstname').value.trim();
     const lastname  = document.getElementById('login-lastname').value.trim();
@@ -905,6 +983,7 @@
 
   // ---------- UITLOGGEN ----------
   document.getElementById('logout-btn').addEventListener('click', () => {
+    playClickSound(420, 0.07, 0.09);
     try { localStorage.removeItem(SESSION_KEY); } catch (err) {}
     document.getElementById('app-content').style.display = 'none';
     document.getElementById('auth-screen').style.display = 'flex';
@@ -1092,11 +1171,19 @@
   // ---------- NAV ----------
   document.querySelectorAll('nav button').forEach(btn => {
     btn.addEventListener('click', () => {
+      playClickSound();
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(btn.dataset.view).classList.add('active');
     });
+  });
+
+  // ---------- TAP-GELUID OP KAARTEN ----------
+  document.addEventListener('click', e => {
+    if (e.target.closest('.fixture') || e.target.closest('.scorer-row')) {
+      playClickSound(520, 0.05, 0.07);
+    }
   });
 </script>
 
