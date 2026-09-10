@@ -605,11 +605,11 @@
 
 <header>
   <div class="header-inner">
-    <div class="comp-label">Seizoen 2026/27 · Bèta v12</div>
+    <div class="comp-label">Seizoen 2026/27</div>
     <h1>3B Street Cup</h1>
     <div class="season-row">
-      <span>4 clubs · najaarscompetitie</span>
-      <span class="matchday"><span class="live-dot"></span>SPEELRONDE 2</span>
+      <span>4 clubs · Landsingerland FC Straat</span>
+      <span class="matchday"><span class="live-dot"></span>SPEELRONDE 1</span>
     </div>
   </div>
 </header>
@@ -671,7 +671,7 @@
 
 </main>
 
-<footer>Bèta v12 · alle namen, uitslagen en cijfers zijn fictief · voorbeelddashboard</footer>
+<footer>RVST Landsingerland 3B Street Cup Website</footer>
 
 </div><!-- /#app-content -->
 
@@ -954,15 +954,17 @@
    .sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
 
   const results = [
-    { home:"TOGB", away:"BVCB",       hs:0, as:0 },
-    { home:"CVV",  away:"SoccerBoys", hs:0, as:0 },
-    { home:"BVCB", away:"CVV",        hs:0, as:0 },
+    { home:"TOGB", away:"CVV",       hs:0, as:0 },
+    { home:"BVCB",  away:"SoccerBoys", hs:0, as:0 },
+    { home:"CVV", away:"BVCB",        hs:0, as:0 },
+    { home:"SoccerBoys", away:"TOGB",       hs:0, as:0 },
   ];
 
   const upcoming = [
-    { day:"Zaterdag 12 sept · 18:30", home:"TOGB", away:"CVV" },
-    { day:"Zaterdag 12 sept · 20:00", home:"TOGB", away:"SoccerBoys" },
-    { day:"Zondag 13 sept · 14:00",   home:"BVCB", away:"SoccerBoys" },
+    { day:"Nog Geen Bevestiging · (tijd)", home:"TOGB", away:"CVV" },
+    { day:"Nog Geen Bevestiging · (tijd)", home:"BCVB", away:"SoccerBoys" },
+    { day:"Nog Geen Bevestiging · (tijd)",   home:"CVV", away:"BVCB" },
+    { day:"Nog Geen Bevestiging · (tijd)",   home:"SoccerBoys", away:"TOGB" },
   ];
 
   const scorers = [
