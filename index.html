@@ -298,6 +298,7 @@
   }
   .scorer-row:active{ transform:scale(0.98); background-color:rgba(244,196,48,0.06); }
   .scorer-row:first-child{ padding-top:0; }
+  .scorer-row.clickable{ cursor:pointer; }
   .scorer-rank{
     font-family:'Oswald',sans-serif;
     font-weight:700;
@@ -494,6 +495,96 @@
     font-family:'Inter',sans-serif;
   }
 
+  /* ---------- PROFILE MODAL ---------- */
+  .profile-modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(8,27,51,0.86);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px 18px;
+    z-index:200;
+    overflow-y:auto;
+  }
+  .profile-modal-overlay.open{ display:flex; }
+  .profile-modal-card{
+    width:100%;
+    max-width:380px;
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+    padding:28px 22px 24px;
+    position:relative;
+    animation:popIn .25s ease;
+  }
+  .modal-close{
+    position:absolute;
+    top:8px; right:8px;
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    background-color:transparent;
+    border:none;
+    color:var(--chalk-dim);
+    font-size:24px;
+    line-height:1;
+    cursor:pointer;
+    padding:8px;
+  }
+  .profile-photo-wrap{
+    display:flex;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+  .profile-photo, .profile-photo-fallback{
+    width:76px; height:76px;
+    border-radius:50%;
+    object-fit:cover;
+    background:var(--amber);
+  }
+  .profile-photo-fallback{
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:24px;
+    color:var(--ink);
+  }
+  .profile-name{
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--chalk);
+  }
+  .profile-club-badge{
+    text-align:center;
+    font-size:12px;
+    color:var(--chalk-dim);
+    margin-top:4px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+  .profile-stats-strip{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--pitch-line);
+    border:1px solid var(--pitch-line);
+    margin:18px 0 20px;
+  }
+  .profile-stat{ background:var(--pitch-dark); padding:12px 6px; text-align:center; }
+  .profile-stat-value{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--amber);
+  }
+  .profile-stat-label{
+    font-size:10px;
+    color:var(--chalk-dim);
+    margin-top:3px;
+  }
+
   /* ---------- MOTION ---------- */
   @keyframes fadeSlideUp{
     from{ opacity:0; transform:translateY(8px); }
@@ -511,14 +602,16 @@
   .auth-tab,
   .auth-submit,
   .logout-btn,
-  .file-btn{
+  .file-btn,
+  .modal-close{
     transition:transform .12s ease, color .15s ease, background-color .15s ease;
   }
   nav button:active,
   .auth-tab:active,
   .auth-submit:active,
   .logout-btn:active,
-  .file-btn:active{
+  .file-btn:active,
+  .modal-close:active{
     transform:scale(0.94);
   }
 
@@ -628,6 +721,65 @@
   </div>
 </div>
 
+<!-- ================= PROFILE MODAL ================= -->
+<div class="profile-modal-overlay" id="profile-modal">
+  <div class="profile-modal-card">
+    <button class="modal-close" id="profile-close-btn">&times;</button>
+
+    <!-- VIEW MODE -->
+    <div id="profile-view">
+      <div class="profile-photo-wrap">
+        <img class="profile-photo" id="profile-view-photo" style="display:none;">
+        <div class="profile-photo-fallback" id="profile-view-fallback" style="display:none;"></div>
+      </div>
+      <div class="profile-name" id="profile-view-name"></div>
+      <div class="profile-club-badge" id="profile-view-club"></div>
+      <div class="profile-stats-strip">
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="profile-view-goals">0</div>
+          <div class="profile-stat-label">Goals</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="profile-view-assists">0</div>
+          <div class="profile-stat-label">Assists</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="profile-view-matches">0</div>
+          <div class="profile-stat-label">Wedstrijden</div>
+        </div>
+      </div>
+      <button class="auth-submit" id="profile-edit-btn" style="display:none;">Profiel bewerken</button>
+    </div>
+
+    <!-- EDIT MODE -->
+    <form class="auth-form" id="profile-edit-form" style="display:none;">
+      <div>
+        <label class="field-label">Profielfoto</label>
+        <div class="photo-row">
+          <img class="photo-preview" id="edit-photo-preview" style="display:none;">
+          <button type="button" class="file-btn" id="edit-photo-btn">Foto wijzigen</button>
+          <input type="file" id="edit-photo-input" accept="image/*" style="display:none;">
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Voornaam <span class="req">*</span></label>
+        <input type="text" id="edit-firstname" required>
+      </div>
+      <div>
+        <label class="field-label">Achternaam <span class="req">*</span></label>
+        <input type="text" id="edit-lastname" required>
+      </div>
+      <div>
+        <label class="field-label">Club <span class="req">*</span></label>
+        <input type="text" id="edit-club" required>
+        <div class="auth-hint">Geldige clubs: TOGB, BVCB, CVV, SoccerBoys (hoofdletters maken niet uit)</div>
+      </div>
+      <div class="auth-error" id="profile-edit-error"></div>
+      <button type="submit" class="auth-submit">Opslaan</button>
+    </form>
+  </div>
+</div>
+
 <!-- ================= APP CONTENT ================= -->
 <div id="app-content" style="display:none;">
 
@@ -707,6 +859,7 @@
   <!-- LEDEN -->
   <div class="view" id="leden">
     <div class="section-heading">Alle leden</div>
+    <div class="auth-hint" style="margin-bottom:10px;">Tik op een lid om het profiel te bekijken.</div>
     <div id="leden-list"></div>
   </div>
 
@@ -727,7 +880,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, addDoc, getDocs, query, where,
-    onSnapshot, orderBy, serverTimestamp
+    onSnapshot, orderBy, serverTimestamp, doc, updateDoc
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -775,7 +928,7 @@
     });
   });
 
-  // ---------- PROFIELFOTO ----------
+  // ---------- PROFIELFOTO (registratie) ----------
   const photoBtn = document.getElementById('reg-photo-btn');
   const photoInput = document.getElementById('reg-photo-input');
   const photoPreview = document.getElementById('reg-photo-preview');
@@ -850,11 +1003,12 @@
         firstname, lastname, firstnameLower, lastnameLower,
         email, birthdate, club,
         photo: regPhotoDataUrl || null,
+        goals: 0, assists: 0, matchesPlayed: 0,
         createdAt: serverTimestamp()
       };
-      await addDoc(accountsCol, newAccount);
-      sendWelcomeEmail(newAccount); // stuurt pas echt zodra EmailJS is gekoppeld, zie comments hieronder
-      logIn(newAccount);
+      const docRef = await addDoc(accountsCol, newAccount);
+      sendWelcomeEmail(newAccount);
+      logIn(newAccount, true, docRef.id);
     } catch (err) {
       console.error(err);
       showAuthError('Kon geen verbinding maken met de database. Probeer het opnieuw.');
@@ -865,16 +1019,7 @@
   });
 
   // ==================================================
-  //  WELKOMSTMAIL — nog niet actief
-  //  Een los HTML-bestand kan zelf geen mail versturen;
-  //  daarvoor is een gratis mailservice als EmailJS nodig
-  //  (werkt zonder eigen server). Stappen om dit te activeren:
-  //   1. Maak een gratis account op emailjs.com
-  //   2. Koppel je e-mailadres (Gmail/Outlook/etc.) als "Service"
-  //   3. Maak een "Email Template" met de welkomsttekst
-  //      (gebruik daarin bijv. {{to_name}}, {{to_email}}, {{club}})
-  //   4. Geef mij: Service ID, Template ID, Public Key
-  //   5. Ik vul ze hieronder in en zet EMAILJS_ENABLED op true
+  //  WELKOMSTMAIL — actief via EmailJS
   // ==================================================
   const EMAILJS_ENABLED = true;
   const EMAILJS_SERVICE_ID = 'service_51k1pg7';
@@ -918,7 +1063,7 @@
         showAuthError('Geen account gevonden met deze naam. Maak eerst een nieuw account aan.');
         return;
       }
-      logIn(snap.docs[0].data());
+      logIn(snap.docs[0].data(), true, snap.docs[0].id);
     } catch (err) {
       console.error(err);
       showAuthError('Kon geen verbinding maken met de database. Probeer het opnieuw.');
@@ -930,22 +1075,30 @@
 
   // ---------- INLOGGEN AFRONDEN ----------
   const SESSION_KEY = 'voetbalSession';
+  let currentAccountId = null;
 
-  function logIn(account, remember = true) {
+  function renderAvatarInto(imgEl, fallbackEl, account, size) {
+    if (account.photo) {
+      imgEl.src = account.photo;
+      imgEl.style.display = 'block';
+      fallbackEl.style.display = 'none';
+    } else {
+      fallbackEl.textContent = ((account.firstname?.[0] || '') + (account.lastname?.[0] || '')).toUpperCase();
+      fallbackEl.style.display = 'flex';
+      imgEl.style.display = 'none';
+    }
+  }
+
+  function logIn(account, remember = true, id = null) {
+    if (id) currentAccountId = id;
+
     document.getElementById('user-name-label').textContent = `${account.firstname} ${account.lastname}`;
     document.getElementById('user-club-label').textContent = account.club;
-
-    const avatarImg = document.getElementById('user-avatar-img');
-    const avatarFallback = document.getElementById('user-avatar-fallback');
-    if (account.photo) {
-      avatarImg.src = account.photo;
-      avatarImg.style.display = 'block';
-      avatarFallback.style.display = 'none';
-    } else {
-      avatarFallback.textContent = (account.firstname[0] + account.lastname[0]).toUpperCase();
-      avatarFallback.style.display = 'flex';
-      avatarImg.style.display = 'none';
-    }
+    renderAvatarInto(
+      document.getElementById('user-avatar-img'),
+      document.getElementById('user-avatar-fallback'),
+      account
+    );
 
     // Sessie lokaal bewaren, zodat een volgend bezoek meteen inlogt
     if (remember) {
@@ -955,7 +1108,8 @@
           lastname: account.lastname,
           birthdate: account.birthdate,
           club: account.club,
-          photo: account.photo || null
+          photo: account.photo || null,
+          id: currentAccountId
         }));
       } catch (err) {
         console.warn('Kon sessie niet lokaal opslaan.', err);
@@ -970,12 +1124,25 @@
     appContent.classList.add('entering');
   }
 
+  async function resolveAccountDoc(firstname, lastname) {
+    const snap = await getDocs(query(
+      accountsCol,
+      where('firstnameLower', '==', firstname.toLowerCase()),
+      where('lastnameLower', '==', lastname.toLowerCase())
+    ));
+    return snap.empty ? null : snap.docs[0];
+  }
+
   // ---------- AUTOMATISCH INLOGGEN BIJ TERUGKEER ----------
-  (function tryAutoLogin() {
+  (async function tryAutoLogin() {
     try {
       const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
       if (saved && saved.firstname && saved.lastname && saved.club) {
-        logIn(saved, false); // niet opnieuw wegschrijven, staat al lokaal
+        logIn(saved, false, saved.id || null); // direct tonen met wat lokaal bekend is
+        const docSnap = await resolveAccountDoc(saved.firstname, saved.lastname);
+        if (docSnap) {
+          logIn(docSnap.data(), true, docSnap.id); // daarna verversen met actuele data + id
+        }
       }
     } catch (err) {
       console.warn('Kon vorige sessie niet herstellen.', err);
@@ -986,25 +1153,32 @@
   document.getElementById('logout-btn').addEventListener('click', () => {
     playClickSound(420, 0.07, 0.09);
     try { localStorage.removeItem(SESSION_KEY); } catch (err) {}
+    currentAccountId = null;
     document.getElementById('app-content').style.display = 'none';
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('login-form').reset();
     clearAuthError();
   });
 
-
-  // ---------- LEDENLIJST (live, iedereen die een account heeft) ----------
+  // ==================================================
+  //  LEDENLIJST + PROFIELEN
+  // ==================================================
   const ledenList = document.getElementById('leden-list');
+  const accountsCache = {}; // id -> accountdata, gevuld door de live ledenlijst
+
   onSnapshot(query(accountsCol, orderBy('createdAt', 'asc')), snapshot => {
     if (snapshot.empty) {
       ledenList.innerHTML = '<div class="auth-hint">Nog geen leden geregistreerd.</div>';
       return;
     }
     ledenList.innerHTML = '';
-    snapshot.forEach(doc => {
-      const a = doc.data();
+    snapshot.forEach(docSnap => {
+      const a = docSnap.data();
+      accountsCache[docSnap.id] = a;
+
       const row = document.createElement('div');
-      row.className = 'scorer-row';
+      row.className = 'scorer-row clickable';
+      row.dataset.id = docSnap.id;
       const initials = ((a.firstname?.[0] || '') + (a.lastname?.[0] || '')).toUpperCase();
       row.innerHTML = `
         ${a.photo
@@ -1020,6 +1194,161 @@
   }, err => {
     console.error(err);
     ledenList.innerHTML = '<div class="auth-hint">Kon ledenlijst niet laden.</div>';
+  });
+
+  ledenList.addEventListener('click', e => {
+    const row = e.target.closest('.scorer-row');
+    if (!row) return;
+    playClickSound(520, 0.05, 0.07);
+    openProfile(row.dataset.id);
+  });
+
+  // ---------- PROFIEL: WEERGAVE ----------
+  const profileModal = document.getElementById('profile-modal');
+  const profileView = document.getElementById('profile-view');
+  const profileEditForm = document.getElementById('profile-edit-form');
+  const profileEditError = document.getElementById('profile-edit-error');
+  let currentProfileId = null;
+
+  function showProfileViewMode() {
+    profileView.style.display = 'block';
+    profileEditForm.style.display = 'none';
+    profileEditError.classList.remove('show');
+    profileEditError.textContent = '';
+  }
+
+  function openProfile(id) {
+    const a = accountsCache[id];
+    if (!a) return;
+    currentProfileId = id;
+
+    document.getElementById('profile-view-name').textContent = `${a.firstname} ${a.lastname}`;
+    document.getElementById('profile-view-club').textContent = a.club;
+    document.getElementById('profile-view-goals').textContent = a.goals || 0;
+    document.getElementById('profile-view-assists').textContent = a.assists || 0;
+    document.getElementById('profile-view-matches').textContent = a.matchesPlayed || 0;
+    renderAvatarInto(
+      document.getElementById('profile-view-photo'),
+      document.getElementById('profile-view-fallback'),
+      a
+    );
+
+    const isOwn = id === currentAccountId;
+    document.getElementById('profile-edit-btn').style.display = isOwn ? 'block' : 'none';
+
+    showProfileViewMode();
+    profileModal.classList.add('open');
+  }
+
+  function closeProfileModal() {
+    profileModal.classList.remove('open');
+    currentProfileId = null;
+  }
+
+  document.getElementById('profile-close-btn').addEventListener('click', () => {
+    playClickSound(420, 0.05, 0.08);
+    closeProfileModal();
+  });
+  profileModal.addEventListener('click', e => {
+    if (e.target === profileModal) closeProfileModal();
+  });
+
+  // ---------- PROFIEL: BEWERKEN ----------
+  let editPhotoDataUrl = null;
+
+  document.getElementById('profile-edit-btn').addEventListener('click', () => {
+    playClickSound();
+    const a = accountsCache[currentProfileId];
+    if (!a) return;
+
+    document.getElementById('edit-firstname').value = a.firstname || '';
+    document.getElementById('edit-lastname').value = a.lastname || '';
+    document.getElementById('edit-club').value = a.club || '';
+    editPhotoDataUrl = null;
+    const editPreview = document.getElementById('edit-photo-preview');
+    if (a.photo) {
+      editPreview.src = a.photo;
+      editPreview.style.display = 'block';
+    } else {
+      editPreview.style.display = 'none';
+    }
+
+    profileView.style.display = 'none';
+    profileEditForm.style.display = 'flex';
+  });
+
+  const editPhotoBtn = document.getElementById('edit-photo-btn');
+  const editPhotoInput = document.getElementById('edit-photo-input');
+  editPhotoBtn.addEventListener('click', () => { playClickSound(560, 0.05, 0.08); editPhotoInput.click(); });
+  editPhotoInput.addEventListener('change', () => {
+    const file = editPhotoInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      editPhotoDataUrl = e.target.result;
+      const editPreview = document.getElementById('edit-photo-preview');
+      editPreview.src = editPhotoDataUrl;
+      editPreview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  profileEditForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    playClickSound();
+    profileEditError.classList.remove('show');
+    profileEditError.textContent = '';
+
+    const firstname = document.getElementById('edit-firstname').value.trim();
+    const lastname  = document.getElementById('edit-lastname').value.trim();
+    const clubRaw   = document.getElementById('edit-club').value;
+
+    if (!firstname || !lastname || !clubRaw.trim()) {
+      profileEditError.textContent = 'Vul voornaam, achternaam en club in.';
+      profileEditError.classList.add('show');
+      return;
+    }
+    const club = normalizeClub(clubRaw);
+    if (!club) {
+      profileEditError.textContent = `"${clubRaw}" is geen geldige club. Kies uit: ${VALID_CLUBS.join(', ')}.`;
+      profileEditError.classList.add('show');
+      return;
+    }
+    if (editPhotoDataUrl && editPhotoDataUrl.length > MAX_PHOTO_CHARS) {
+      profileEditError.textContent = 'Deze profielfoto is te groot. Kies een kleiner bestand.';
+      profileEditError.classList.add('show');
+      return;
+    }
+
+    const submitBtn = profileEditForm.querySelector('.auth-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Bezig...';
+
+    const updates = {
+      firstname, lastname,
+      firstnameLower: firstname.toLowerCase(),
+      lastnameLower: lastname.toLowerCase(),
+      club
+    };
+    if (editPhotoDataUrl) updates.photo = editPhotoDataUrl;
+
+    try {
+      await updateDoc(doc(db, 'accounts', currentProfileId), updates);
+      const merged = { ...accountsCache[currentProfileId], ...updates };
+      accountsCache[currentProfileId] = merged;
+
+      if (currentProfileId === currentAccountId) {
+        logIn(merged, true, currentAccountId); // topbalk + sessie bijwerken
+      }
+      closeProfileModal();
+    } catch (err) {
+      console.error(err);
+      profileEditError.textContent = 'Opslaan mislukt. Probeer het opnieuw.';
+      profileEditError.classList.add('show');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Opslaan';
+    }
   });
 </script>
 
@@ -1182,7 +1511,7 @@
 
   // ---------- TAP-GELUID OP KAARTEN ----------
   document.addEventListener('click', e => {
-    if (e.target.closest('.fixture') || e.target.closest('.scorer-row')) {
+    if (e.target.closest('.fixture')) {
       playClickSound(520, 0.05, 0.07);
     }
   });
