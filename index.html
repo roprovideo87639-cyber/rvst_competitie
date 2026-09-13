@@ -19,7 +19,6 @@
   --red-card:#C1443C;
   --yellow-card:#F4C430;
 
-  /* GLASS */
   --glass-bg:rgba(18,62,119,0.48);
   --glass-bg-dark:rgba(8,27,51,0.48);
   --glass-border:rgba(255,255,255,0.16);
@@ -189,7 +188,7 @@ h1{
 }
 
 /* =========================================================
-   NAVIGATION
+   NAV
 ========================================================= */
 
 nav{
@@ -629,14 +628,6 @@ tr.zone-cup td.pts{
   border-color:var(--amber);
 }
 
-.scorer-row:first-child{
-  padding-top:13px;
-}
-
-.scorer-row.clickable{
-  cursor:pointer;
-}
-
 .scorer-rank{
   position:relative;
   font-family:'Oswald',sans-serif;
@@ -693,7 +684,7 @@ tr.zone-cup td.pts{
 }
 
 /* =========================================================
-   LEDEN - ELK LID EIGEN RECTANGLE
+   LEDEN
 ========================================================= */
 
 #leden-list{
@@ -1310,6 +1301,7 @@ nav button:active,
 }
 
 @media(max-width:520px){
+
   .season-row{
     align-items:flex-start;
     flex-direction:column;
@@ -1347,9 +1339,15 @@ nav button:active,
 let __audioCtx = null;
 
 function getAudioCtx(){
+
   if(!__audioCtx){
-    const Ctx = window.AudioContext || window.webkitAudioContext;
+
+    const Ctx =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
     if(!Ctx) return null;
+
     __audioCtx = new Ctx();
   }
 
@@ -1365,11 +1363,16 @@ function playClickSound(
   duration = 0.06,
   volume = 0.10
 ){
+
   const ctx = getAudioCtx();
+
   if(!ctx) return;
 
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+  const osc =
+    ctx.createOscillator();
+
+  const gain =
+    ctx.createGain();
 
   osc.type = 'sine';
 
@@ -1404,15 +1407,18 @@ function playClickSound(
   osc.start();
 
   osc.stop(
-    ctx.currentTime + duration + .02
+    ctx.currentTime +
+    duration +
+    .02
   );
 }
 
-window.playClickSound = playClickSound;
+window.playClickSound =
+  playClickSound;
 </script>
 
 <!-- =======================================================
-     AUTH
+     AUTH SCREEN
 ======================================================= -->
 
 <div id="auth-screen">
@@ -1455,6 +1461,7 @@ window.playClickSound = playClickSound;
       id="login-form">
 
       <div>
+
         <label class="field-label">
           Voornaam <span class="req">*</span>
         </label>
@@ -1463,9 +1470,11 @@ window.playClickSound = playClickSound;
           type="text"
           id="login-firstname"
           required>
+
       </div>
 
       <div>
+
         <label class="field-label">
           Achternaam <span class="req">*</span>
         </label>
@@ -1474,6 +1483,7 @@ window.playClickSound = playClickSound;
           type="text"
           id="login-lastname"
           required>
+
       </div>
 
       <button
@@ -1491,6 +1501,7 @@ window.playClickSound = playClickSound;
       id="register-form">
 
       <div>
+
         <label class="field-label">
           Voornaam <span class="req">*</span>
         </label>
@@ -1498,10 +1509,13 @@ window.playClickSound = playClickSound;
         <input
           type="text"
           id="reg-firstname"
+          name="to_name_firstname"
           required>
+
       </div>
 
       <div>
+
         <label class="field-label">
           Achternaam <span class="req">*</span>
         </label>
@@ -1510,9 +1524,11 @@ window.playClickSound = playClickSound;
           type="text"
           id="reg-lastname"
           required>
+
       </div>
 
       <div>
+
         <label class="field-label">
           E-mailadres <span class="req">*</span>
         </label>
@@ -1520,11 +1536,14 @@ window.playClickSound = playClickSound;
         <input
           type="email"
           id="reg-email"
+          name="email"
           placeholder="naam@voorbeeld.nl"
           required>
+
       </div>
 
       <div>
+
         <label class="field-label">
           Geboortedatum <span class="req">*</span>
         </label>
@@ -1533,9 +1552,11 @@ window.playClickSound = playClickSound;
           type="date"
           id="reg-birthdate"
           required>
+
       </div>
 
       <div>
+
         <label class="field-label">
           Club <span class="req">*</span>
         </label>
@@ -1543,6 +1564,7 @@ window.playClickSound = playClickSound;
         <input
           type="text"
           id="reg-club"
+          name="club"
           placeholder="bijv. TOGB"
           required>
 
@@ -1550,6 +1572,7 @@ window.playClickSound = playClickSound;
           Geldige clubs: TOGB, BVCB, CVV, SoccerBoys
           (hoofdletters maken niet uit)
         </div>
+
       </div>
 
       <div>
@@ -1697,7 +1720,7 @@ window.playClickSound = playClickSound;
 
     </div>
 
-    <!-- PROFILE EDIT -->
+    <!-- EDIT PROFILE -->
 
     <form
       class="auth-form"
@@ -1796,14 +1819,12 @@ window.playClickSound = playClickSound;
 </div>
 
 <!-- =======================================================
-     APP
+     APP CONTENT
 ======================================================= -->
 
 <div
   id="app-content"
   style="display:none;">
-
-  <!-- USER BAR -->
 
   <div class="user-bar">
 
@@ -1844,8 +1865,6 @@ window.playClickSound = playClickSound;
 
   </div>
 
-  <!-- HEADER -->
-
   <header>
 
     <div class="header-inner">
@@ -1877,8 +1896,6 @@ window.playClickSound = playClickSound;
     </div>
 
   </header>
-
-  <!-- NAV -->
 
   <nav>
 
@@ -2027,10 +2044,95 @@ window.playClickSound = playClickSound;
 </div>
 
 <!-- =======================================================
-     EMAILJS
+     EMAILJS CONNECTIE
+     
+     ALLEEN VOOR HET VERSTUREN VAN DE WELKOMSTMAIL.
+     GEEN EMAILJS DESIGN/CSS WORDT GEBRUIKT.
 ======================================================= -->
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+
+<script type="text/javascript">
+
+/*
+  EmailJS public key
+*/
+emailjs.init(
+  'GD8xYCR-ue3Re7Nbj'
+);
+
+/*
+  Jouw EmailJS instellingen
+*/
+const EMAILJS_SERVICE_ID =
+  'service_51k1pg7';
+
+const EMAILJS_TEMPLATE_ID =
+  'template_pzrl2zf';
+
+/*
+  Alleen de verbinding met EmailJS.
+  Deze functie verandert NIETS aan de website-design.
+*/
+function sendWelcomeEmail(account){
+
+  if(
+    typeof emailjs === 'undefined'
+  ){
+    console.error(
+      'EmailJS is niet geladen.'
+    );
+
+    return;
+  }
+
+  /*
+    Deze drie namen komen overeen met
+    de velden van jouw EmailJS template:
+
+    to_name
+    club
+    email
+  */
+
+  emailjs.send(
+    EMAILJS_SERVICE_ID,
+    EMAILJS_TEMPLATE_ID,
+    {
+      to_name:
+        `${account.firstname} ${account.lastname}`,
+
+      club:
+        account.club,
+
+      email:
+        account.email
+    }
+  )
+  .then(
+    () => {
+
+      console.log(
+        'Welkomstmail succesvol verstuurd.'
+      );
+
+    },
+    err => {
+
+      console.error(
+        'Welkomstmail versturen mislukt:',
+        err
+      );
+
+    }
+  );
+
+}
+
+</script>
 
 <!-- =======================================================
      FIREBASE
@@ -2038,7 +2140,9 @@ window.playClickSound = playClickSound;
 
 <script type="module">
 
-import { initializeApp }
+import {
+  initializeApp
+}
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
@@ -2080,12 +2184,19 @@ const firebaseConfig = {
     "G-5VJHKWL2SG"
 };
 
-const app = initializeApp(firebaseConfig);
+const app =
+  initializeApp(
+    firebaseConfig
+  );
 
-const db = getFirestore(app);
+const db =
+  getFirestore(app);
 
 const accountsCol =
-  collection(db,'accounts');
+  collection(
+    db,
+    'accounts'
+  );
 
 const VALID_CLUBS = [
   "TOGB",
@@ -2121,20 +2232,30 @@ function normalizeClub(input){
 ======================================================= */
 
 const authError =
-  document.getElementById('auth-error');
+  document.getElementById(
+    'auth-error'
+  );
 
 function showAuthError(msg){
 
-  authError.textContent = msg;
+  authError.textContent =
+    msg;
 
-  authError.classList.add('show');
+  authError.classList.add(
+    'show'
+  );
+
 }
 
 function clearAuthError(){
 
-  authError.classList.remove('show');
+  authError.classList.remove(
+    'show'
+  );
 
-  authError.textContent = '';
+  authError.textContent =
+    '';
+
 }
 
 /* =======================================================
@@ -2143,52 +2264,79 @@ function clearAuthError(){
 
 document
 .querySelectorAll('.auth-tab')
-.forEach(tab => {
+.forEach(
+  tab => {
 
-  tab.addEventListener('click',() => {
+    tab.addEventListener(
+      'click',
+      () => {
 
-    playClickSound();
+        playClickSound();
 
-    document
-    .querySelectorAll('.auth-tab')
-    .forEach(t =>
-      t.classList.remove('active')
+        document
+        .querySelectorAll(
+          '.auth-tab'
+        )
+        .forEach(
+          t =>
+            t.classList.remove(
+              'active'
+            )
+        );
+
+        document
+        .querySelectorAll(
+          '.auth-form'
+        )
+        .forEach(
+          f =>
+            f.classList.remove(
+              'active'
+            )
+        );
+
+        tab.classList.add(
+          'active'
+        );
+
+        document
+        .getElementById(
+          tab.dataset.tab +
+          '-form'
+        )
+        .classList.add(
+          'active'
+        );
+
+        clearAuthError();
+
+      }
     );
 
-    document
-    .querySelectorAll('.auth-form')
-    .forEach(f =>
-      f.classList.remove('active')
-    );
-
-    tab.classList.add('active');
-
-    document
-    .getElementById(
-      tab.dataset.tab + '-form'
-    )
-    .classList.add('active');
-
-    clearAuthError();
-
-  });
-
-});
+  }
+);
 
 /* =======================================================
    REGISTER PHOTO
 ======================================================= */
 
 const photoBtn =
-  document.getElementById('reg-photo-btn');
+  document.getElementById(
+    'reg-photo-btn'
+  );
 
 const photoInput =
-  document.getElementById('reg-photo-input');
+  document.getElementById(
+    'reg-photo-input'
+  );
 
 const photoPreview =
-  document.getElementById('reg-photo-preview');
+  document.getElementById(
+    'reg-photo-preview'
+  );
 
-let regPhotoDataUrl = null;
+let regPhotoDataUrl =
+  null;
 
 photoBtn.addEventListener(
   'click',
@@ -2217,20 +2365,23 @@ photoInput.addEventListener(
     const reader =
       new FileReader();
 
-    reader.onload = e => {
+    reader.onload =
+      e => {
 
-      regPhotoDataUrl =
-        e.target.result;
+        regPhotoDataUrl =
+          e.target.result;
 
-      photoPreview.src =
-        regPhotoDataUrl;
+        photoPreview.src =
+          regPhotoDataUrl;
 
-      photoPreview.style.display =
-        'block';
+        photoPreview.style.display =
+          'block';
 
-    };
+      };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(
+      file
+    );
 
   }
 );
@@ -2240,7 +2391,9 @@ photoInput.addEventListener(
 ======================================================= */
 
 document
-.getElementById('register-form')
+.getElementById(
+  'register-form'
+)
 .addEventListener(
   'submit',
   async e => {
@@ -2253,27 +2406,40 @@ document
 
     const firstname =
       document
-      .getElementById('reg-firstname')
-      .value.trim();
+      .getElementById(
+        'reg-firstname'
+      )
+      .value
+      .trim();
 
     const lastname =
       document
-      .getElementById('reg-lastname')
-      .value.trim();
+      .getElementById(
+        'reg-lastname'
+      )
+      .value
+      .trim();
 
     const email =
       document
-      .getElementById('reg-email')
-      .value.trim();
+      .getElementById(
+        'reg-email'
+      )
+      .value
+      .trim();
 
     const birthdate =
       document
-      .getElementById('reg-birthdate')
+      .getElementById(
+        'reg-birthdate'
+      )
       .value;
 
     const clubRaw =
       document
-      .getElementById('reg-club')
+      .getElementById(
+        'reg-club'
+      )
       .value;
 
     if(
@@ -2294,7 +2460,11 @@ document
     const emailPattern =
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if(!emailPattern.test(email)){
+    if(
+      !emailPattern.test(
+        email
+      )
+    ){
 
       showAuthError(
         'Vul een geldig e-mailadres in.'
@@ -2304,7 +2474,9 @@ document
     }
 
     const club =
-      normalizeClub(clubRaw);
+      normalizeClub(
+        clubRaw
+      );
 
     if(!club){
 
@@ -2339,7 +2511,8 @@ document
         '.auth-submit'
       );
 
-    submitBtn.disabled = true;
+    submitBtn.disabled =
+      true;
 
     submitBtn.textContent =
       'Bezig...';
@@ -2350,11 +2523,13 @@ document
         await getDocs(
           query(
             accountsCol,
+
             where(
               'firstnameLower',
               '==',
               firstnameLower
             ),
+
             where(
               'lastnameLower',
               '==',
@@ -2375,18 +2550,27 @@ document
       const newAccount = {
 
         firstname,
+
         lastname,
+
         firstnameLower,
+
         lastnameLower,
+
         email,
+
         birthdate,
+
         club,
 
         photo:
-          regPhotoDataUrl || null,
+          regPhotoDataUrl ||
+          null,
 
         goals:0,
+
         assists:0,
+
         matchesPlayed:0,
 
         createdAt:
@@ -2394,15 +2578,28 @@ document
 
       };
 
+      /*
+        Eerst account opslaan.
+      */
+
       const docRef =
         await addDoc(
           accountsCol,
           newAccount
         );
 
+      /*
+        Daarna alleen de EmailJS-connectie
+        gebruiken om de welkomstmail te sturen.
+      */
+
       sendWelcomeEmail(
         newAccount
       );
+
+      /*
+        Daarna normaal inloggen.
+      */
 
       logIn(
         newAccount,
@@ -2413,7 +2610,9 @@ document
     }
     catch(err){
 
-      console.error(err);
+      console.error(
+        err
+      );
 
       showAuthError(
         'Kon geen verbinding maken met de database. Probeer het opnieuw.'
@@ -2422,7 +2621,8 @@ document
     }
     finally{
 
-      submitBtn.disabled = false;
+      submitBtn.disabled =
+        false;
 
       submitBtn.textContent =
         'Account aanmaken';
@@ -2433,58 +2633,13 @@ document
 );
 
 /* =======================================================
-   EMAILJS
-======================================================= */
-
-const EMAILJS_ENABLED = true;
-
-const EMAILJS_SERVICE_ID =
-  'service_51k1pg7';
-
-const EMAILJS_TEMPLATE_ID =
-  'template_pzrl2zf';
-
-const EMAILJS_PUBLIC_KEY =
-  'GD8xYCR-ue3Re7Nbj';
-
-function sendWelcomeEmail(account){
-
-  if(
-    !EMAILJS_ENABLED ||
-    typeof emailjs === 'undefined'
-  ) return;
-
-  emailjs
-  .send(
-    EMAILJS_SERVICE_ID,
-    EMAILJS_TEMPLATE_ID,
-    {
-      to_name:
-        `${account.firstname} ${account.lastname}`,
-
-      to_email:
-        account.email,
-
-      club:
-        account.club
-    },
-    EMAILJS_PUBLIC_KEY
-  )
-  .catch(
-    err =>
-      console.error(
-        'Welkomstmail versturen mislukt:',
-        err
-      )
-  );
-}
-
-/* =======================================================
    LOGIN
 ======================================================= */
 
 document
-.getElementById('login-form')
+.getElementById(
+  'login-form'
+)
 .addEventListener(
   'submit',
   async e => {
@@ -2497,15 +2652,24 @@ document
 
     const firstname =
       document
-      .getElementById('login-firstname')
-      .value.trim();
+      .getElementById(
+        'login-firstname'
+      )
+      .value
+      .trim();
 
     const lastname =
       document
-      .getElementById('login-lastname')
-      .value.trim();
+      .getElementById(
+        'login-lastname'
+      )
+      .value
+      .trim();
 
-    if(!firstname || !lastname){
+    if(
+      !firstname ||
+      !lastname
+    ){
 
       showAuthError(
         'Vul zowel je voornaam als achternaam in.'
@@ -2519,7 +2683,8 @@ document
         '.auth-submit'
       );
 
-    submitBtn.disabled = true;
+    submitBtn.disabled =
+      true;
 
     submitBtn.textContent =
       'Bezig...';
@@ -2530,11 +2695,13 @@ document
         await getDocs(
           query(
             accountsCol,
+
             where(
               'firstnameLower',
               '==',
               firstname.toLowerCase()
             ),
+
             where(
               'lastnameLower',
               '==',
@@ -2561,7 +2728,9 @@ document
     }
     catch(err){
 
-      console.error(err);
+      console.error(
+        err
+      );
 
       showAuthError(
         'Kon geen verbinding maken met de database. Probeer het opnieuw.'
@@ -2570,7 +2739,8 @@ document
     }
     finally{
 
-      submitBtn.disabled = false;
+      submitBtn.disabled =
+        false;
 
       submitBtn.textContent =
         'Inloggen';
@@ -2587,7 +2757,8 @@ document
 const SESSION_KEY =
   'voetbalSession';
 
-let currentAccountId = null;
+let currentAccountId =
+  null;
 
 function renderAvatarInto(
   imgEl,
@@ -2636,16 +2807,21 @@ function logIn(
 ){
 
   if(id){
-    currentAccountId = id;
+    currentAccountId =
+      id;
   }
 
   document
-  .getElementById('user-name-label')
+  .getElementById(
+    'user-name-label'
+  )
   .textContent =
     `${account.firstname} ${account.lastname}`;
 
   document
-  .getElementById('user-club-label')
+  .getElementById(
+    'user-club-label'
+  )
   .textContent =
     account.club;
 
@@ -2680,7 +2856,8 @@ function logIn(
             account.club,
 
           photo:
-            account.photo || null,
+            account.photo ||
+            null,
 
           id:
             currentAccountId
@@ -2701,7 +2878,9 @@ function logIn(
   }
 
   document
-  .getElementById('auth-screen')
+  .getElementById(
+    'auth-screen'
+  )
   .style.display =
     'none';
 
@@ -2738,11 +2917,13 @@ async function resolveAccountDoc(
     await getDocs(
       query(
         accountsCol,
+
         where(
           'firstnameLower',
           '==',
           firstname.toLowerCase()
         ),
+
         where(
           'lastnameLower',
           '==',
@@ -2769,7 +2950,8 @@ async function resolveAccountDoc(
       JSON.parse(
         localStorage.getItem(
           SESSION_KEY
-        ) || 'null'
+        ) ||
+        'null'
       );
 
     if(
@@ -2782,7 +2964,8 @@ async function resolveAccountDoc(
       logIn(
         saved,
         false,
-        saved.id || null
+        saved.id ||
+        null
       );
 
       const docSnap =
@@ -2820,7 +3003,9 @@ async function resolveAccountDoc(
 ======================================================= */
 
 document
-.getElementById('logout-btn')
+.getElementById(
+  'logout-btn'
+)
 .addEventListener(
   'click',
   () => {
@@ -2840,20 +3025,27 @@ document
     }
     catch(err){}
 
-    currentAccountId = null;
+    currentAccountId =
+      null;
 
     document
-    .getElementById('app-content')
+    .getElementById(
+      'app-content'
+    )
     .style.display =
       'none';
 
     document
-    .getElementById('auth-screen')
+    .getElementById(
+      'auth-screen'
+    )
     .style.display =
       'flex';
 
     document
-    .getElementById('login-form')
+    .getElementById(
+      'login-form'
+    )
     .reset();
 
     clearAuthError();
@@ -2880,6 +3072,7 @@ onSnapshot(
       'asc'
     )
   ),
+
   snapshot => {
 
     if(snapshot.empty){
@@ -2890,7 +3083,8 @@ onSnapshot(
       return;
     }
 
-    ledenList.innerHTML = '';
+    ledenList.innerHTML =
+      '';
 
     snapshot.forEach(
       docSnap => {
@@ -2907,7 +3101,6 @@ onSnapshot(
             'div'
           );
 
-        /* IEDER LID EEN EIGEN GLASS RECTANGLE */
         row.className =
           'member-card clickable';
 
@@ -2924,13 +3117,17 @@ onSnapshot(
 
           ${
             a.photo
+
             ?
+
             `<img
               class="user-avatar"
               style="width:40px;height:40px;"
               src="${a.photo}"
               alt="">`
+
             :
+
             `<div
               class="user-avatar-fallback"
               style="width:40px;height:40px;">
@@ -2960,9 +3157,12 @@ onSnapshot(
     );
 
   },
+
   err => {
 
-    console.error(err);
+    console.error(
+      err
+    );
 
     ledenList.innerHTML =
       '<div class="auth-hint">Kon ledenlijst niet laden.</div>';
@@ -3022,7 +3222,8 @@ const profileEditError =
     'profile-edit-error'
   );
 
-let currentProfileId = null;
+let currentProfileId =
+  null;
 
 function showProfileViewMode(){
 
@@ -3128,7 +3329,7 @@ function closeProfileModal(){
 }
 
 /* =======================================================
-   PROFILE CLOSE
+   CLOSE PROFILE
 ======================================================= */
 
 document
@@ -3170,7 +3371,8 @@ profileModal.addEventListener(
    EDIT PROFILE
 ======================================================= */
 
-let editPhotoDataUrl = null;
+let editPhotoDataUrl =
+  null;
 
 document
 .getElementById(
@@ -3284,25 +3486,28 @@ editPhotoInput.addEventListener(
     const reader =
       new FileReader();
 
-    reader.onload = e => {
+    reader.onload =
+      e => {
 
-      editPhotoDataUrl =
-        e.target.result;
+        editPhotoDataUrl =
+          e.target.result;
 
-      const editPreview =
-        document.getElementById(
-          'edit-photo-preview'
-        );
+        const editPreview =
+          document.getElementById(
+            'edit-photo-preview'
+          );
 
-      editPreview.src =
-        editPhotoDataUrl;
+        editPreview.src =
+          editPhotoDataUrl;
 
-      editPreview.style.display =
-        'block';
+        editPreview.style.display =
+          'block';
 
-    };
+      };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(
+      file
+    );
 
   }
 );
@@ -3331,14 +3536,16 @@ profileEditForm.addEventListener(
       .getElementById(
         'edit-firstname'
       )
-      .value.trim();
+      .value
+      .trim();
 
     const lastname =
       document
       .getElementById(
         'edit-lastname'
       )
-      .value.trim();
+      .value
+      .trim();
 
     const clubRaw =
       document
@@ -3473,7 +3680,9 @@ profileEditForm.addEventListener(
     }
     catch(err){
 
-      console.error(err);
+      console.error(
+        err
+      );
 
       profileEditError.textContent =
         'Opslaan mislukt. Probeer het opnieuw.';
@@ -3567,10 +3776,6 @@ const teams = [
     b.gf - a.gf
 );
 
-/* =======================================================
-   RESULTS
-======================================================= */
-
 const results = [
 
   {
@@ -3603,10 +3808,6 @@ const results = [
 
 ];
 
-/* =======================================================
-   UPCOMING
-======================================================= */
-
 const upcoming = [
 
   {
@@ -3634,10 +3835,6 @@ const upcoming = [
   }
 
 ];
-
-/* =======================================================
-   SCORERS
-======================================================= */
 
 const scorers = [
 
@@ -3672,10 +3869,6 @@ const scorers = [
   }
 
 ];
-
-/* =======================================================
-   HELPERS
-======================================================= */
 
 const teamColor =
   name =>
@@ -3722,14 +3915,15 @@ const avgGoals =
   : "0.0";
 
 document
-.getElementById('stats-strip')
+.getElementById(
+  'stats-strip'
+)
 .innerHTML = `
 
   <div class="stat-cell">
 
     <div
       class="stat-value"
-      data-target="${gamesPlayed}"
       id="stat-games">
       0
     </div>
@@ -3744,7 +3938,6 @@ document
 
     <div
       class="stat-value"
-      data-target="${totalGoals}"
       id="stat-goals">
       0
     </div>
@@ -3770,10 +3963,6 @@ document
   </div>
 
 `;
-
-/* =======================================================
-   COUNT UP
-======================================================= */
 
 function countUp(
   el,
@@ -3837,16 +4026,14 @@ countUp(
   document.getElementById(
     'stat-games'
   ),
-  gamesPlayed,
-  0
+  gamesPlayed
 );
 
 countUp(
   document.getElementById(
     'stat-goals'
   ),
-  totalGoals,
-  0
+  totalGoals
 );
 
 countUp(
@@ -4134,7 +4321,9 @@ scorers.forEach(
 ======================================================= */
 
 document
-.querySelectorAll('nav button')
+.querySelectorAll(
+  'nav button'
+)
 .forEach(
   btn => {
 
