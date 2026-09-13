@@ -1249,12 +1249,14 @@ footer{
   justify-content:center;
   padding:20px;
   z-index:500;
+  pointer-events:none;
   overflow:hidden;
   background:rgba(3,14,29,.84);
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
 }
-.topscorer-celebration-overlay.open{display:flex;}
+.topscorer-celebration-overlay.open{display:flex; pointer-events:none;}
+.topscorer-celebration-card{pointer-events:auto;}
 .topscorer-celebration-card{
   position:relative;
   z-index:2;
@@ -3134,6 +3136,7 @@ document
 
     lastTopScorerId =
       null;
+    topScorerCelebrationShownForLeader = null;
 
     closeTopScorerCelebration();
 
@@ -3231,6 +3234,8 @@ const topScorerCelebrationName = document.getElementById('topscorer-celebration-
 const topScorerCelebrationGoals = document.getElementById('topscorer-celebration-goals');
 const confettiLayer = document.getElementById('confetti-layer');
 let lastTopScorerId = null;
+let topScorerCelebrationTimer = null;
+let topScorerCelebrationShownForLeader = null;
 
 function createConfetti(){
   if(!confettiLayer) return;
@@ -3251,6 +3256,10 @@ function createConfetti(){
 }
 
 function closeTopScorerCelebration(){
+  if(topScorerCelebrationTimer){
+    clearTimeout(topScorerCelebrationTimer);
+    topScorerCelebrationTimer = null;
+  }
   if(!topScorerCelebration) return;
   topScorerCelebration.classList.remove('open');
   topScorerCelebration.setAttribute('aria-hidden','true');
@@ -3260,11 +3269,19 @@ function closeTopScorerCelebration(){
 function showTopScorerCelebration(player){
   if(!player || !player.id || !topScorerCelebration) return;
   if(!currentAccountId || currentAccountId !== player.id) return;
+
+  // Nooit meerdere timers/popups door dezelfde Firebase update.
+  closeTopScorerCelebration();
   topScorerCelebrationName.textContent = player.name;
   topScorerCelebrationGoals.textContent = player.goals;
   createConfetti();
   topScorerCelebration.classList.add('open');
   topScorerCelebration.setAttribute('aria-hidden','false');
+
+  // Popup sluit automatisch na exact 5 seconden.
+  topScorerCelebrationTimer = setTimeout(() => {
+    closeTopScorerCelebration();
+  }, 5000);
 }
 
 function checkTopScorerCelebration(){
@@ -3288,9 +3305,13 @@ function checkTopScorerCelebration(){
 
   const leader = players[0];
   const leaderChanged = lastTopScorerId !== leader.id;
+  if(leaderChanged && topScorerCelebrationShownForLeader && topScorerCelebrationShownForLeader !== leader.id){
+    topScorerCelebrationShownForLeader = null;
+  }
   lastTopScorerId = leader.id;
 
-  if(leaderChanged && currentAccountId === leader.id){
+  if(leaderChanged && currentAccountId === leader.id && topScorerCelebrationShownForLeader !== leader.id){
+    topScorerCelebrationShownForLeader = leader.id;
     showTopScorerCelebration(leader);
   }
 }
