@@ -1238,116 +1238,6 @@ footer{
 }
 
 /* =========================================================
-   TOPSCORER CELEBRATION
-========================================================= */
-
-.topscorer-celebration-overlay{
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:500;
-  pointer-events:none;
-  overflow:hidden;
-  background:transparent;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-}
-.topscorer-celebration-overlay.open{display:flex; pointer-events:none;}
-/* De website blijft volledig zichtbaar en interactief achter de popup. */
-.topscorer-celebration-card{pointer-events:auto;}
-.topscorer-celebration-card{
-  position:relative;
-  z-index:2;
-  width:100%;
-  max-width:390px;
-  padding:30px 24px 24px;
-  text-align:center;
-  overflow:hidden;
-  background:linear-gradient(135deg,rgba(18,62,119,.84),rgba(8,27,51,.76));
-  border:1px solid rgba(244,196,48,.48);
-  border-radius:18px;
-  box-shadow:0 25px 70px rgba(0,0,0,.48),0 0 35px rgba(244,196,48,.14),inset 0 1px 0 rgba(255,255,255,.10);
-  backdrop-filter:blur(20px) saturate(140%);
-  -webkit-backdrop-filter:blur(20px) saturate(140%);
-  animation:topscorerCelebrationIn .42s cubic-bezier(.2,.8,.2,1);
-}
-.topscorer-celebration-card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at 50% 0%,rgba(244,196,48,.20),transparent 48%);
-  pointer-events:none;
-}
-.topscorer-celebration-card > *{position:relative;z-index:2;}
-.topscorer-celebration-close{
-  position:absolute;
-  top:8px;
-  right:8px;
-  z-index:5;
-  width:34px;
-  height:34px;
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:9px;
-  background:rgba(8,27,51,.30);
-  color:var(--chalk-dim);
-  font-size:24px;
-  line-height:1;
-  cursor:pointer;
-}
-.topscorer-trophy{
-  font-size:54px;
-  line-height:1;
-  margin:2px 0 12px;
-  filter:drop-shadow(0 6px 12px rgba(244,196,48,.25));
-  animation:topscorerTrophy .8s ease .15s both;
-}
-.topscorer-kicker{color:var(--amber);font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;}
-.topscorer-celebration-title{margin-top:3px;color:var(--chalk);font-family:'Oswald',sans-serif;font-size:38px;font-weight:700;line-height:1.05;}
-.topscorer-celebration-name{margin-top:6px;color:var(--amber);font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;}
-.topscorer-celebration-text{margin-top:12px;color:var(--chalk-dim);font-size:14px;line-height:1.5;}
-.topscorer-celebration-text strong{color:var(--chalk);}
-.topscorer-celebration-goals{
-  margin:14px auto 18px;
-  width:max-content;
-  min-width:100px;
-  padding:7px 14px;
-  border:1px solid rgba(244,196,48,.28);
-  border-radius:999px;
-  background:rgba(244,196,48,.10);
-  color:var(--chalk);
-  font-family:'Oswald',sans-serif;
-  font-size:16px;
-  font-weight:600;
-}
-.top-scorer-ok{width:100%;}
-.confetti-layer{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
-.confetti-piece{
-  position:absolute;
-  top:-18px;
-  width:8px;
-  height:15px;
-  opacity:0;
-  border-radius:2px;
-  animation:confettiFall 2.8s linear forwards;
-}
-@keyframes topscorerCelebrationIn{
-  from{opacity:0;transform:scale(.78) translateY(18px);}
-  to{opacity:1;transform:scale(1) translateY(0);}
-}
-@keyframes topscorerTrophy{
-  0%{transform:scale(.4) rotate(-15deg);opacity:0;}
-  55%{transform:scale(1.18) rotate(6deg);opacity:1;}
-  100%{transform:scale(1) rotate(0);opacity:1;}
-}
-@keyframes confettiFall{
-  0%{opacity:1;transform:translate3d(0,-20px,0) rotate(0deg);}
-  100%{opacity:0;transform:translate3d(var(--confetti-x),110vh,0) rotate(var(--confetti-r));}
-}
-
-/* =========================================================
    MOTION
 ========================================================= */
 
@@ -1734,21 +1624,6 @@ window.playClickSound =
 
   </div>
 
-</div>
-
-<!-- TOPSCORER CELEBRATION POPUP -->
-<div class="topscorer-celebration-overlay" id="topscorer-celebration" aria-hidden="true">
-  <div class="confetti-layer" id="confetti-layer"></div>
-  <div class="topscorer-celebration-card" role="dialog" aria-modal="true">
-    <button class="topscorer-celebration-close" id="topscorer-celebration-close" type="button" aria-label="Sluiten">&times;</button>
-    <div class="topscorer-trophy">🏆</div>
-    <div class="topscorer-kicker">TOPSCORER #1</div>
-    <div class="topscorer-celebration-title">Hoera!</div>
-    <div class="topscorer-celebration-name" id="topscorer-celebration-name"></div>
-    <div class="topscorer-celebration-text">Je bent de <strong>topscorer van de 3B Cup!</strong> ⚽</div>
-    <div class="topscorer-celebration-goals"><span id="topscorer-celebration-goals">0</span> goals</div>
-    <button class="auth-submit top-scorer-ok" id="topscorer-celebration-ok" type="button">Lekker bezig! 🎉</button>
-  </div>
 </div>
 
 <!-- =======================================================
@@ -2987,10 +2862,6 @@ function logIn(
   .style.display =
     'none';
 
-  if(typeof checkTopScorerCelebration === 'function'){
-    checkTopScorerCelebration();
-  }
-
   const appContent =
     document.getElementById(
       'app-content'
@@ -3135,12 +3006,6 @@ document
     currentAccountId =
       null;
 
-    lastTopScorerId =
-      null;
-    topScorerCelebrationShownForLeader = null;
-
-    closeTopScorerCelebration();
-
     document
     .getElementById(
       'app-content'
@@ -3224,104 +3089,6 @@ function getGoals(account){
 
   return Math.floor(value);
 
-}
-
-/*
-  TOPSCORER #1 CELEBRATION
-  Alleen de ingelogde gebruiker krijgt deze popup.
-*/
-const topScorerCelebration = document.getElementById('topscorer-celebration');
-const topScorerCelebrationName = document.getElementById('topscorer-celebration-name');
-const topScorerCelebrationGoals = document.getElementById('topscorer-celebration-goals');
-const confettiLayer = document.getElementById('confetti-layer');
-let lastTopScorerId = null;
-let topScorerCelebrationTimer = null;
-let topScorerCelebrationShownForLeader = null;
-
-function createConfetti(){
-  if(!confettiLayer) return;
-  confettiLayer.innerHTML = '';
-  for(let i = 0; i < 85; i++){
-    const piece = document.createElement('span');
-    piece.className = 'confetti-piece';
-    piece.style.left = `${Math.random() * 100}%`;
-    piece.style.width = `${5 + Math.random() * 6}px`;
-    piece.style.height = `${9 + Math.random() * 10}px`;
-    piece.style.animationDelay = `${Math.random() * .65}s`;
-    piece.style.animationDuration = `${2.1 + Math.random() * 1.5}s`;
-    piece.style.setProperty('--confetti-x', `${-180 + Math.random() * 360}px`);
-    piece.style.setProperty('--confetti-r', `${-720 + Math.random() * 1440}deg`);
-    piece.style.background = ['#F4C430','#FFFFFF','#4EA35C','#4FA3E0','#D14E4E'][Math.floor(Math.random() * 5)];
-    confettiLayer.appendChild(piece);
-  }
-}
-
-function closeTopScorerCelebration(){
-  if(topScorerCelebrationTimer){
-    clearTimeout(topScorerCelebrationTimer);
-    topScorerCelebrationTimer = null;
-  }
-  if(!topScorerCelebration) return;
-  topScorerCelebration.classList.remove('open');
-  topScorerCelebration.setAttribute('aria-hidden','true');
-  if(confettiLayer) confettiLayer.innerHTML = '';
-}
-
-function isTopScorersViewActive(){
-  const view = document.getElementById('topscorers');
-  return !!(view && view.classList.contains('active'));
-}
-
-function showTopScorerCelebration(player){
-  if(!player || !player.id || !topScorerCelebration) return;
-  if(!currentAccountId || currentAccountId !== player.id) return;
-  // De popup mag uitsluitend zichtbaar zijn in de categorie Topscorers.
-  if(!isTopScorersViewActive()) return;
-
-  // Nooit meerdere timers/popups door dezelfde Firebase update.
-  closeTopScorerCelebration();
-  topScorerCelebrationName.textContent = player.name;
-  topScorerCelebrationGoals.textContent = player.goals;
-  createConfetti();
-  topScorerCelebration.classList.add('open');
-  topScorerCelebration.setAttribute('aria-hidden','false');
-
-  // Popup sluit automatisch na exact 5 seconden.
-  topScorerCelebrationTimer = setTimeout(() => {
-    closeTopScorerCelebration();
-  }, 5000);
-}
-
-function checkTopScorerCelebration(){
-  const players = Object.entries(accountsCache)
-    .map(([id, account]) => ({
-      id,
-      name: `${account.firstname || ''} ${account.lastname || ''}`.trim(),
-      goals: getGoals(account)
-    }))
-    .filter(player => player.name.length > 0);
-
-  if(players.length === 0){
-    lastTopScorerId = null;
-    return;
-  }
-
-  players.sort((a,b) => {
-    if(b.goals !== a.goals) return b.goals - a.goals;
-    return a.name.localeCompare(b.name,'nl',{sensitivity:'base'});
-  });
-
-  const leader = players[0];
-  const leaderChanged = lastTopScorerId !== leader.id;
-  if(leaderChanged && topScorerCelebrationShownForLeader && topScorerCelebrationShownForLeader !== leader.id){
-    topScorerCelebrationShownForLeader = null;
-  }
-  lastTopScorerId = leader.id;
-
-  if(leaderChanged && currentAccountId === leader.id && topScorerCelebrationShownForLeader !== leader.id){
-    topScorerCelebrationShownForLeader = leader.id;
-    showTopScorerCelebration(leader);
-  }
 }
 
 /*
@@ -3670,8 +3437,6 @@ onSnapshot(
 
     renderTopScorers();
 
-    checkTopScorerCelebration();
-
   },
 
   err => {
@@ -3689,30 +3454,6 @@ onSnapshot(
 
   }
 );
-
-/* =======================================================
-   TOPSCORER POPUP BUTTONS
-======================================================= */
-
-document.getElementById('topscorer-celebration-close').addEventListener('click', () => {
-  playClickSound(520,.05,.07);
-  closeTopScorerCelebration();
-});
-
-document.getElementById('topscorer-celebration-ok').addEventListener('click', () => {
-  playClickSound(680,.06,.08);
-  closeTopScorerCelebration();
-});
-
-topScorerCelebration.addEventListener('click', event => {
-  if(event.target === topScorerCelebration) closeTopScorerCelebration();
-});
-
-document.addEventListener('keydown', event => {
-  if(event.key === 'Escape' && topScorerCelebration.classList.contains('open')){
-    closeTopScorerCelebration();
-  }
-});
 
 /* =======================================================
    LEDEN CLICK
@@ -4910,32 +4651,6 @@ document
         .classList.add(
           'active'
         );
-
-        // Alleen bij het openen van Topscorers mag de celebration verschijnen.
-        if(btn.dataset.view === 'topscorers'){
-          checkTopScorerCelebration();
-
-          const players = Object.entries(accountsCache)
-            .map(([id, account]) => ({
-              id,
-              name: `${account.firstname || ''} ${account.lastname || ''}`.trim(),
-              goals: getGoals(account)
-            }))
-            .filter(player => player.name.length > 0)
-            .sort((a,b) => {
-              if(b.goals !== a.goals) return b.goals - a.goals;
-              return a.name.localeCompare(b.name,'nl',{sensitivity:'base'});
-            });
-
-          const leader = players[0];
-          if(leader && currentAccountId === leader.id && topScorerCelebrationShownForLeader !== leader.id){
-            topScorerCelebrationShownForLeader = leader.id;
-            showTopScorerCelebration(leader);
-          }
-        }else{
-          // Veilig sluiten wanneer de gebruiker naar een andere categorie gaat.
-          closeTopScorerCelebration();
-        }
 
       }
     );
