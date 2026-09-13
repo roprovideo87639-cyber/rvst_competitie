@@ -449,6 +449,14 @@ tr.zone-cup td.pts{
     0% 18%
   );
   box-shadow:0 1px 3px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+
+.crest img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
 .legend{
@@ -1454,8 +1462,6 @@ window.playClickSound =
       id="auth-error">
     </div>
 
-    <!-- LOGIN -->
-
     <form
       class="auth-form active"
       id="login-form">
@@ -1493,8 +1499,6 @@ window.playClickSound =
       </button>
 
     </form>
-
-    <!-- REGISTER -->
 
     <form
       class="auth-form"
@@ -1720,8 +1724,6 @@ window.playClickSound =
 
     </div>
 
-    <!-- EDIT PROFILE -->
-
     <form
       class="auth-form"
       id="profile-edit-form"
@@ -1924,8 +1926,6 @@ window.playClickSound =
 
   <main>
 
-    <!-- STAND -->
-
     <div
       class="view active"
       id="stand">
@@ -1981,8 +1981,6 @@ window.playClickSound =
 
     </div>
 
-    <!-- PROGRAMMA -->
-
     <div
       class="view"
       id="programma">
@@ -2015,8 +2013,6 @@ window.playClickSound =
 
     </div>
 
-    <!-- LEDEN -->
-
     <div
       class="view"
       id="leden">
@@ -2045,9 +2041,7 @@ window.playClickSound =
 
 <!-- =======================================================
      EMAILJS CONNECTIE
-     
-     ALLEEN VOOR HET VERSTUREN VAN DE WELKOMSTMAIL.
-     GEEN EMAILJS DESIGN/CSS WORDT GEBRUIKT.
+     Alleen verbinding. Geen EmailJS-design.
 ======================================================= -->
 
 <script
@@ -2057,51 +2051,45 @@ window.playClickSound =
 
 <script type="text/javascript">
 
-/*
-  EmailJS public key
-*/
-emailjs.init(
-  'GD8xYCR-ue3Re7Nbj'
-);
+const EMAILJS_PUBLIC_KEY =
+  'GD8xYCR-ue3Re7Nbj';
 
-/*
-  Jouw EmailJS instellingen
-*/
 const EMAILJS_SERVICE_ID =
   'service_51k1pg7';
 
 const EMAILJS_TEMPLATE_ID =
   'template_pzrl2zf';
 
-/*
-  Alleen de verbinding met EmailJS.
-  Deze functie verandert NIETS aan de website-design.
-*/
+if(
+  typeof emailjs !== 'undefined'
+){
+
+  emailjs.init({
+    publicKey:
+      EMAILJS_PUBLIC_KEY
+  });
+
+}
+
 function sendWelcomeEmail(account){
 
   if(
     typeof emailjs === 'undefined'
   ){
+
     console.error(
       'EmailJS is niet geladen.'
     );
 
     return;
+
   }
-
-  /*
-    Deze drie namen komen overeen met
-    de velden van jouw EmailJS template:
-
-    to_name
-    club
-    email
-  */
 
   emailjs.send(
     EMAILJS_SERVICE_ID,
     EMAILJS_TEMPLATE_ID,
     {
+
       to_name:
         `${account.firstname} ${account.lastname}`,
 
@@ -2110,6 +2098,7 @@ function sendWelcomeEmail(account){
 
       email:
         account.email
+
     }
   )
   .then(
@@ -2120,6 +2109,7 @@ function sendWelcomeEmail(account){
       );
 
     },
+
     err => {
 
       console.error(
@@ -2182,6 +2172,7 @@ const firebaseConfig = {
 
   measurementId:
     "G-5VJHKWL2SG"
+
 };
 
 const app =
@@ -2578,28 +2569,15 @@ document
 
       };
 
-      /*
-        Eerst account opslaan.
-      */
-
       const docRef =
         await addDoc(
           accountsCol,
           newAccount
         );
 
-      /*
-        Daarna alleen de EmailJS-connectie
-        gebruiken om de welkomstmail te sturen.
-      */
-
       sendWelcomeEmail(
         newAccount
       );
-
-      /*
-        Daarna normaal inloggen.
-      */
 
       logIn(
         newAccount,
@@ -3064,6 +3042,269 @@ const ledenList =
 
 const accountsCache = {};
 
+/* =======================================================
+   TOPSCORERS
+   FIREBASE -> REALTIME -> AUTOMATISCH SORTEREN
+======================================================= */
+
+const scorersList =
+  document.getElementById(
+    'scorers-list'
+  );
+
+/*
+  Maak veilige HTML van tekst.
+*/
+function escapeHTML(value){
+
+  return String(
+    value ?? ''
+  )
+  .replaceAll('&','&amp;')
+  .replaceAll('<','&lt;')
+  .replaceAll('>','&gt;')
+  .replaceAll('"','&quot;')
+  .replaceAll("'","&#039;");
+
+}
+
+/*
+  Haal het aantal goals betrouwbaar uit Firebase.
+*/
+function getGoals(account){
+
+  const value =
+    Number(
+      account.goals
+    );
+
+  if(
+    !Number.isFinite(value) ||
+    value < 0
+  ){
+
+    return 0;
+
+  }
+
+  return Math.floor(value);
+
+}
+
+/*
+  Render de volledige topscorerslijst.
+*/
+function renderTopScorers(){
+
+  const players =
+    Object.entries(
+      accountsCache
+    )
+    .map(
+      ([id, account]) => ({
+
+        id,
+
+        name:
+          `${account.firstname || ''} ${account.lastname || ''}`.trim(),
+
+        team:
+          account.club || 'Onbekend',
+
+        goals:
+          getGoals(account),
+
+        photo:
+          account.photo || null
+
+      })
+    )
+    .filter(
+      player =>
+        player.name.length > 0
+    );
+
+  /*
+    BELANGRIJK:
+
+    Eerst sorteren op goals van hoog
+    naar laag.
+
+    Dus:
+    10 goals
+    8 goals
+    5 goals
+    2 goals
+    0 goals
+
+    Wanneer Firebase een goal verandert,
+    wordt deze functie opnieuw uitgevoerd.
+  */
+
+  players.sort(
+    (a,b) => {
+
+      if(
+        b.goals !==
+        a.goals
+      ){
+
+        return b.goals -
+               a.goals;
+
+      }
+
+      /*
+        Bij gelijke goals sorteren we
+        alfabetisch op naam zodat de
+        volgorde stabiel blijft.
+      */
+
+      return a.name.localeCompare(
+        b.name,
+        'nl',
+        {
+          sensitivity:'base'
+        }
+      );
+
+    }
+  );
+
+  if(players.length === 0){
+
+    scorersList.innerHTML = `
+      <div class="auth-hint">
+        Nog geen spelers geregistreerd.
+      </div>
+    `;
+
+    return;
+
+  }
+
+  /*
+    Hoogste aantal goals bepaalt
+    automatisch de lengte van de balk.
+  */
+
+  const maxGoals =
+    Math.max(
+      1,
+      ...players.map(
+        player =>
+          player.goals
+      )
+    );
+
+  scorersList.innerHTML =
+    '';
+
+  players.forEach(
+    (player,index) => {
+
+      const div =
+        document.createElement(
+          'div'
+        );
+
+      div.className =
+        'scorer-row';
+
+      div.style.flexWrap =
+        'wrap';
+
+      const logo =
+        getClubLogo(
+          player.team
+        );
+
+      const crestHTML =
+        logo
+
+        ?
+
+        `
+          <span
+            class="crest"
+            style="background:${teamColor(player.team)}">
+
+            <img
+              src="${escapeHTML(logo)}"
+              alt="${escapeHTML(player.team)} logo">
+
+          </span>
+        `
+
+        :
+
+        `
+          <span
+            class="crest"
+            style="background:${teamColor(player.team)}">
+            ${escapeHTML(
+              teamCode(player.team).slice(0,2)
+            )}
+          </span>
+        `;
+
+      const percentage =
+        maxGoals > 0
+        ? (
+            player.goals /
+            maxGoals *
+            100
+          ).toFixed(0)
+        : 0;
+
+      div.innerHTML = `
+
+        <span class="scorer-rank">
+          ${index + 1}
+        </span>
+
+        ${crestHTML}
+
+        <span class="scorer-info">
+
+          <div class="scorer-name">
+            ${escapeHTML(player.name)}
+          </div>
+
+          <div class="scorer-team">
+            ${escapeHTML(player.team)}
+          </div>
+
+          <div class="goal-bar-track">
+
+            <div
+              class="goal-bar-fill"
+              style="width:${percentage}%">
+            </div>
+
+          </div>
+
+        </span>
+
+        <span class="scorer-goals">
+          ${player.goals}
+        </span>
+
+      `;
+
+      scorersList.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+/* =======================================================
+   FIREBASE REALTIME LEDEN + TOPSCORERS
+======================================================= */
+
 onSnapshot(
   query(
     accountsCol,
@@ -3075,16 +3316,18 @@ onSnapshot(
 
   snapshot => {
 
-    if(snapshot.empty){
+    /*
+      Eerst de cache volledig opnieuw
+      opbouwen.
+    */
 
-      ledenList.innerHTML =
-        '<div class="auth-hint">Nog geen leden geregistreerd.</div>';
-
-      return;
-    }
-
-    ledenList.innerHTML =
-      '';
+    Object.keys(
+      accountsCache
+    )
+    .forEach(
+      key =>
+        delete accountsCache[key]
+    );
 
     snapshot.forEach(
       docSnap => {
@@ -3096,76 +3339,118 @@ onSnapshot(
           docSnap.id
         ] = a;
 
-        const row =
-          document.createElement(
-            'div'
-          );
-
-        row.className =
-          'member-card clickable';
-
-        row.dataset.id =
-          docSnap.id;
-
-        const initials =
-          (
-            (a.firstname?.[0] || '') +
-            (a.lastname?.[0] || '')
-          ).toUpperCase();
-
-        row.innerHTML = `
-
-          ${
-            a.photo
-
-            ?
-
-            `<img
-              class="user-avatar"
-              style="width:40px;height:40px;"
-              src="${a.photo}"
-              alt="">`
-
-            :
-
-            `<div
-              class="user-avatar-fallback"
-              style="width:40px;height:40px;">
-              ${initials}
-            </div>`
-          }
-
-          <span class="scorer-info">
-
-            <div class="scorer-name">
-              ${a.firstname} ${a.lastname}
-            </div>
-
-            <div class="scorer-team">
-              ${a.club}
-            </div>
-
-          </span>
-
-        `;
-
-        ledenList.appendChild(
-          row
-        );
-
       }
     );
+
+    /*
+      LEDENLIJST
+    */
+
+    if(snapshot.empty){
+
+      ledenList.innerHTML =
+        '<div class="auth-hint">Nog geen leden geregistreerd.</div>';
+
+    }
+    else{
+
+      ledenList.innerHTML =
+        '';
+
+      snapshot.forEach(
+        docSnap => {
+
+          const a =
+            docSnap.data();
+
+          const row =
+            document.createElement(
+              'div'
+            );
+
+          row.className =
+            'member-card clickable';
+
+          row.dataset.id =
+            docSnap.id;
+
+          const initials =
+            (
+              (a.firstname?.[0] || '') +
+              (a.lastname?.[0] || '')
+            ).toUpperCase();
+
+          row.innerHTML = `
+
+            ${
+              a.photo
+
+              ?
+
+              `<img
+                class="user-avatar"
+                style="width:40px;height:40px;"
+                src="${escapeHTML(a.photo)}"
+                alt="">`
+
+              :
+
+              `<div
+                class="user-avatar-fallback"
+                style="width:40px;height:40px;">
+                ${escapeHTML(initials)}
+              </div>`
+            }
+
+            <span class="scorer-info">
+
+              <div class="scorer-name">
+                ${escapeHTML(a.firstname)} ${escapeHTML(a.lastname)}
+              </div>
+
+              <div class="scorer-team">
+                ${escapeHTML(a.club)}
+              </div>
+
+            </span>
+
+          `;
+
+          ledenList.appendChild(
+            row
+          );
+
+        }
+      );
+
+    }
+
+    /*
+      HIER GEBEURT DE AUTOMATISCHE
+      TOPSCORERS UPDATE.
+
+      Iedere Firebase wijziging:
+      -> cache aanpassen
+      -> opnieuw sorteren
+      -> topscorers opnieuw tekenen
+    */
+
+    renderTopScorers();
 
   },
 
   err => {
 
     console.error(
+      'Firebase leden/topscorers fout:',
       err
     );
 
     ledenList.innerHTML =
       '<div class="auth-hint">Kon ledenlijst niet laden.</div>';
+
+    scorersList.innerHTML =
+      '<div class="auth-hint">Kon topscorers niet laden.</div>';
 
   }
 );
@@ -3271,7 +3556,7 @@ function openProfile(id){
     'profile-view-goals'
   )
   .textContent =
-    a.goals || 0;
+    getGoals(a);
 
   document
   .getElementById(
@@ -3317,6 +3602,10 @@ function openProfile(id){
 
 }
 
+/* =======================================================
+   CLOSE PROFILE
+======================================================= */
+
 function closeProfileModal(){
 
   profileModal.classList.remove(
@@ -3327,10 +3616,6 @@ function closeProfileModal(){
     null;
 
 }
-
-/* =======================================================
-   CLOSE PROFILE
-======================================================= */
 
 document
 .getElementById(
@@ -3675,6 +3960,12 @@ profileEditForm.addEventListener(
 
       }
 
+      /*
+        De Firestore onSnapshot hierboven
+        zorgt vervolgens automatisch voor
+        de nieuwe ledenlijst én topscorers.
+      */
+
       closeProfileModal();
 
     }
@@ -3712,6 +4003,68 @@ profileEditForm.addEventListener(
 ======================================================= -->
 
 <script>
+
+/* =======================================================
+   CLUBLOGO'S
+=======================================================
+
+   HIER KUN JE ZELF DE LOGO'S AANPASSEN.
+
+   Voorbeeld:
+
+   TOGB:
+   "https://jouwwebsite.nl/togb.png"
+
+   Wil je geen logo gebruiken?
+   Laat de waarde dan gewoon "".
+
+======================================================= */
+
+const clubLogos = {
+
+  TOGB:
+    "",
+
+  BVCB:
+    "",
+
+  CVV:
+    "",
+
+  SoccerBoys:
+    ""
+
+};
+
+/*
+  Deze functie zoekt het logo
+  van de betreffende club.
+*/
+
+function getClubLogo(
+  clubName
+){
+
+  const club =
+    Object.keys(
+      clubLogos
+    ).find(
+      name =>
+        name.toLowerCase() ===
+        String(
+          clubName || ''
+        ).toLowerCase()
+    );
+
+  return club
+    ? clubLogos[club]
+    : "";
+
+}
+
+/* =======================================================
+   TEAMS
+======================================================= */
 
 const teams = [
 
@@ -3762,11 +4115,17 @@ const teams = [
 ]
 .map(
   t => ({
+
     ...t,
+
     pts:
-      t.w * 3 + t.d,
+      t.w * 3 +
+      t.d,
+
     gd:
-      t.gf - t.ga
+      t.gf -
+      t.ga
+
   })
 )
 .sort(
@@ -3774,7 +4133,7 @@ const teams = [
     b.pts - a.pts ||
     b.gd - a.gd ||
     b.gf - a.gf
-);
+  );
 
 const results = [
 
@@ -3836,39 +4195,13 @@ const upcoming = [
 
 ];
 
-const scorers = [
+/*
+  De oude vaste scorers-array is bewust
+  verwijderd.
 
-  {
-    name:"leeg",
-    team:"TOGB",
-    goals:0
-  },
-
-  {
-    name:"leeg",
-    team:"SoccerBoys",
-    goals:0
-  },
-
-  {
-    name:"leeg",
-    team:"BVCB",
-    goals:0
-  },
-
-  {
-    name:"leeg",
-    team:"CVV",
-    goals:0
-  },
-
-  {
-    name:"leeg",
-    team:"TOGB",
-    goals:0
-  }
-
-];
+  De topscorers komen nu volledig
+  uit Firebase accounts.
+*/
 
 const teamColor =
   name =>
@@ -3905,13 +4238,17 @@ const gamesPlayed =
 const totalGoals =
   teams.reduce(
     (sum,t) =>
-      sum + t.gf,
+      sum +
+      t.gf,
     0
   );
 
 const avgGoals =
   gamesPlayed > 0
-  ? (totalGoals / gamesPlayed).toFixed(1)
+  ? (
+      totalGoals /
+      gamesPlayed
+    ).toFixed(1)
   : "0.0";
 
 document
@@ -3991,7 +4328,8 @@ function countUp(
       );
 
     const value =
-      target * eased;
+      target *
+      eased;
 
     el.textContent =
       decimals
@@ -4080,6 +4418,38 @@ teams.forEach(
 
     }
 
+    const logo =
+      getClubLogo(
+        t.name
+      );
+
+    const crestHTML =
+      logo
+
+      ?
+
+      `
+        <span
+          class="crest"
+          style="background:${t.color}">
+
+          <img
+            src="${logo}"
+            alt="${t.name} logo">
+
+        </span>
+      `
+
+      :
+
+      `
+        <span
+          class="crest"
+          style="background:${t.color}">
+          ${t.code.slice(0,2)}
+        </span>
+      `;
+
     tr.innerHTML = `
 
       <td>
@@ -4090,11 +4460,7 @@ teams.forEach(
 
       <td class="team-col">
 
-        <span
-          class="crest"
-          style="background:${t.color}">
-          ${t.code.slice(0,2)}
-        </span>
+        ${crestHTML}
 
         ${t.name}
 
@@ -4229,87 +4595,6 @@ upcoming.forEach(
     `;
 
     upcomingList.appendChild(
-      div
-    );
-
-  }
-);
-
-/* =======================================================
-   TOPSCORERS
-======================================================= */
-
-const scorersList =
-  document.getElementById(
-    'scorers-list'
-  );
-
-const maxGoals =
-  Math.max(
-    1,
-    ...scorers.map(
-      s => s.goals
-    )
-  );
-
-scorers.forEach(
-  (s,i) => {
-
-    const div =
-      document.createElement(
-        'div'
-      );
-
-    div.className =
-      'scorer-row';
-
-    div.style.flexWrap =
-      'wrap';
-
-    div.innerHTML = `
-
-      <span class="scorer-rank">
-        ${i+1}
-      </span>
-
-      <span
-        class="crest"
-        style="background:${teamColor(s.team)}">
-        ${teamCode(s.team).slice(0,2)}
-      </span>
-
-      <span class="scorer-info">
-
-        <div class="scorer-name">
-          ${s.name}
-        </div>
-
-        <div class="scorer-team">
-          ${s.team}
-        </div>
-
-        <div class="goal-bar-track">
-
-          <div
-            class="goal-bar-fill"
-            style="width:${(
-              s.goals /
-              maxGoals *
-              100
-            ).toFixed(0)}%">
-          </div>
-
-        </div>
-
-      </span>
-
-      <span class="scorer-goals">
-        ${s.goals}
-      </span>
-
-    `;
-
-    scorersList.appendChild(
       div
     );
 
