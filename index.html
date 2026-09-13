@@ -6,1106 +6,1184 @@
 <title>3B Street Cup</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-:root{
-  --pitch-dark:#0A2E5C;
-  --pitch-mid:#123E77;
-  --pitch-line:#2E5FA0;
-  --chalk:#F3F1E7;
-  --chalk-dim:#B9C6DC;
-  --amber:#F4C430;
-  --ink:#081B33;
-  --red-card:#C1443C;
-  --yellow-card:#F4C430;
-
-  /* GLASS */
-  --glass-bg:rgba(18,62,119,.46);
-  --glass-dark:rgba(8,27,51,.52);
-  --glass-border:rgba(255,255,255,.14);
-  --glass-highlight:rgba(255,255,255,.08);
-  --glass-shadow:0 10px 35px rgba(0,0,0,.28);
-  --glass-blur:18px;
-}
-
-html{
-  background:var(--ink);
-  color-scheme:dark;
-}
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  background:
-    radial-gradient(circle at 50% -10%,rgba(46,95,160,.18),transparent 40%),
-    var(--ink);
-  min-height:100vh;
-  color:var(--chalk);
-  font-family:'Inter',sans-serif;
-  -webkit-font-smoothing:antialiased;
-  padding-bottom:60px;
-}
-
-.num{
-  font-family:'Oswald',sans-serif;
-  font-weight:600;
-}
-
-/* ================= HEADER ================= */
-
-header{
-  background:
-    linear-gradient(180deg,rgba(10,46,92,.78),rgba(18,62,119,.62));
-  padding:28px 20px 22px;
-  position:relative;
-  overflow:hidden;
-  border-bottom:1px solid rgba(244,196,48,.55);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-
-header::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background-image:repeating-linear-gradient(
-    90deg,
-    rgba(255,255,255,.035) 0 2px,
-    transparent 2px 46px
-  );
-  pointer-events:none;
-}
-
-header::after{
-  content:"";
-  position:absolute;
-  top:-60%;
-  left:50%;
-  width:340px;
-  height:340px;
-  transform:translateX(-50%);
-  background:radial-gradient(
-    circle,
-    rgba(244,196,48,.16) 0%,
-    rgba(244,196,48,0) 70%
-  );
-  pointer-events:none;
-}
-
-.header-inner{
-  position:relative;
-  z-index:1;
-}
-
-.comp-label{
-  font-size:12px;
-  letter-spacing:.14em;
-  color:var(--chalk-dim);
-  text-transform:uppercase;
-  font-weight:500;
-}
-
-h1{
-  font-family:'Oswald',sans-serif;
-  font-size:32px;
-  font-weight:700;
-  letter-spacing:.01em;
-  margin-top:4px;
-  color:var(--chalk);
-}
-
-.season-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  margin-top:14px;
-  font-size:13px;
-  color:var(--chalk-dim);
-}
-
-.season-row .matchday{
-  background:rgba(244,196,48,.9);
-  color:var(--ink);
-  font-family:'Oswald',sans-serif;
-  font-weight:600;
-  padding:4px 10px;
-  font-size:13px;
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  border-radius:10px;
-  box-shadow:0 0 14px rgba(244,196,48,.35);
-}
-
-.live-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--ink);
-  animation:pulseDot 1.6s ease-in-out infinite;
-}
-
-@keyframes pulseDot{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.35;transform:scale(.7)}
-}
-
-/* ================= NAV ================= */
-
-nav{
-  display:flex;
-  background:rgba(10,46,92,.72);
-  border-bottom:1px solid rgba(255,255,255,.10);
-  position:sticky;
-  top:0;
-  z-index:10;
-  overflow-x:auto;
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-
-nav button{
-  flex:1;
-  min-width:100px;
-  appearance:none;
-  -webkit-appearance:none;
-  background:transparent;
-  border:none;
-  color:var(--chalk-dim);
-  font-family:'Inter',sans-serif;
-  font-size:14px;
-  font-weight:600;
-  padding:14px 10px;
-  cursor:pointer;
-  position:relative;
-  transition:color .15s ease,transform .12s ease;
-}
-
-nav button.active{
-  color:var(--chalk);
-}
-
-nav button.active::after{
-  content:"";
-  position:absolute;
-  left:16%;
-  right:16%;
-  bottom:0;
-  height:3px;
-  background:var(--amber);
-  border-radius:5px 5px 0 0;
-}
-
-main{
-  padding:18px 16px 8px;
-  max-width:720px;
-  margin:0 auto;
-}
-
-.view{
-  display:none;
-}
-
-.view.active{
-  display:block;
-}
-
-.section-heading{
-  font-family:'Oswald',sans-serif;
-  font-size:15px;
-  font-weight:600;
-  letter-spacing:.02em;
-  color:var(--amber);
-  margin:22px 0 10px;
-}
-
-.section-heading:first-child{
-  margin-top:4px;
-}
-
-/* ================= GLASS BASIS ================= */
-
-.stats-strip,
-.table-wrap,
-.fixture,
-.auth-card,
-.profile-modal-card{
-  position:relative;
-  overflow:hidden;
-  border:1px solid var(--glass-border);
-  box-shadow:var(--glass-shadow);
-  backdrop-filter:blur(var(--glass-blur));
-  -webkit-backdrop-filter:blur(var(--glass-blur));
-}
-
-.stats-strip::after,
-.table-wrap::after,
-.fixture::after,
-.auth-card::after,
-.profile-modal-card::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:8%;
-  right:8%;
-  height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,.18),
-    transparent
-  );
-  pointer-events:none;
-}
-
-/* ================= QUICK STATS ================= */
-
-.stats-strip{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-  background:rgba(18,62,119,.24);
-  padding:1px;
-  border-radius:19px;
-  margin-bottom:22px;
-}
-
-.stat-cell{
-  background:rgba(10,46,92,.48);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:15px;
-  padding:14px 10px;
-  text-align:center;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-}
-
-.stat-value{
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:22px;
-  color:var(--amber);
-}
-
-.stat-label{
-  font-size:10.5px;
-  color:var(--chalk-dim);
-  margin-top:3px;
-  letter-spacing:.02em;
-}
-
-/* ================= STANDINGS ================= */
-
-.table-wrap{
-  background:rgba(18,62,119,.42);
-  border-radius:19px;
-  padding:2px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-
-thead th{
-  text-align:center;
-  font-weight:600;
-  color:var(--chalk-dim);
-  font-size:11px;
-  padding:9px 4px;
-  border-bottom:1px solid rgba(255,255,255,.09);
-}
-
-thead th.team-col{
-  text-align:left;
-  padding-left:12px;
-}
-
-tbody td{
-  text-align:center;
-  padding:9px 4px;
-  color:var(--chalk);
-  border-bottom:1px solid rgba(46,115,80,.22);
-}
-
-tbody tr:last-child td{
-  border-bottom:none;
-}
-
-td.team-col{
-  text-align:left;
-  padding-left:8px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:500;
-}
-
-.pos{
-  font-family:'Oswald',sans-serif;
-  font-weight:600;
-  width:18px;
-  display:inline-block;
-  text-align:center;
-  color:var(--chalk-dim);
-}
-
-tr.zone-cup .pos{
-  color:var(--amber);
-}
-
-tr.zone-cup{
-  box-shadow:inset 3px 0 0 var(--amber);
-}
-
-tr.zone-drop{
-  box-shadow:inset 3px 0 0 var(--red-card);
-}
-
-td.pts{
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  color:var(--amber);
-}
-
-tr.zone-cup td.pts{
-  text-shadow:0 0 10px rgba(244,196,48,.7);
-}
-
-.crest{
-  width:22px;
-  height:24px;
-  flex-shrink:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:'Oswald',sans-serif;
-  font-size:9px;
-  font-weight:700;
-  color:var(--ink);
-  clip-path:polygon(
-    50% 0%,
-    100% 18%,
-    100% 65%,
-    50% 100%,
-    0% 65%,
-    0% 18%
-  );
-  box-shadow:0 1px 3px rgba(0,0,0,.35);
-}
-
-.legend{
-  display:flex;
-  gap:16px;
-  margin-top:10px;
-  font-size:11px;
-  color:var(--chalk-dim);
-  flex-wrap:wrap;
-}
-
-.legend span{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.dot{
-  width:8px;
-  height:8px;
-  display:inline-block;
-  border-radius:3px;
-}
-
-.dot.cup{
-  background:var(--amber);
-}
-
-.dot.drop{
-  background:var(--red-card);
-}
-
-/* ================= FIXTURES ================= */
-
-.fixture-day{
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:var(--chalk-dim);
-  margin:16px 0 8px;
-}
-
-.fixture-day:first-of-type{
-  margin-top:0;
-}
-
-.fixture{
-  display:grid;
-  grid-template-columns:1fr 56px 1fr;
-  align-items:center;
-  background:rgba(18,62,119,.42);
-  border-radius:17px;
-  padding:12px 10px;
-  margin-bottom:7px;
-  font-size:13px;
-  gap:6px;
-  transition:border-color .15s ease,transform .12s ease,background .15s ease;
-}
-
-.fixture:hover{
-  border-color:rgba(244,196,48,.35);
-  background:rgba(18,62,119,.52);
-}
-
-.fixture:active{
-  transform:scale(.98);
-  border-color:var(--amber);
-}
-
-.fixture .home{
-  text-align:right;
-  font-weight:500;
-}
-
-.fixture .away{
-  text-align:left;
-  font-weight:500;
-}
-
-.fixture .score{
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  text-align:center;
-  font-size:15px;
-  color:var(--amber);
-}
-
-.fixture .score.tbd{
-  font-family:'Inter',sans-serif;
-  font-weight:600;
-  font-size:12px;
-  color:var(--chalk-dim);
-}
-
-/* ================= TOPSCORERS ================= */
-
-.scorer-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:11px 10px;
-  margin-bottom:6px;
-  border:1px solid transparent;
-  border-radius:16px;
-  transition:transform .12s ease,background-color .15s ease,border-color .15s ease;
-}
-
-.scorer-row:hover{
-  background:rgba(255,255,255,.035);
-  border-color:rgba(255,255,255,.08);
-}
-
-.scorer-row:active{
-  transform:scale(.98);
-  background-color:rgba(244,196,48,.06);
-}
-
-.scorer-row:first-child{
-  padding-top:10px;
-}
-
-.scorer-row.clickable{
-  cursor:pointer;
-}
-
-.scorer-rank{
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:18px;
-  width:24px;
-  color:var(--chalk-dim);
-}
-
-.scorer-row:nth-child(1) .scorer-rank{
-  color:var(--amber);
-}
-
-.scorer-info{
-  flex:1;
-}
-
-.scorer-name{
-  font-weight:600;
-  font-size:14px;
-}
-
-.scorer-team{
-  font-size:12px;
-  color:var(--chalk-dim);
-  margin-top:1px;
-}
-
-.scorer-goals{
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:20px;
-  color:var(--amber);
-}
-
-.goal-bar-track{
-  height:4px;
-  background:rgba(255,255,255,.08);
-  margin-top:8px;
-  overflow:hidden;
-  border-radius:10px;
-}
-
-.goal-bar-fill{
-  height:100%;
-  background:linear-gradient(90deg,var(--pitch-line),var(--amber));
-  border-radius:10px;
-}
-
-footer{
-  text-align:center;
-  font-size:11px;
-  color:var(--chalk-dim);
-  padding:24px 16px 0;
-}
-
-/* ================= AUTH SCREEN ================= */
-
-#auth-screen{
-  min-height:100vh;
-  width:100%;
-  background:
-    radial-gradient(circle at 50% 20%,rgba(46,95,160,.22),transparent 45%),
-    var(--ink);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px 18px;
-}
-
-.auth-card{
-  width:100%;
-  max-width:380px;
-  background:rgba(18,62,119,.48);
-  border-radius:24px;
-  padding:26px 22px 24px;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.38),
-    inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.auth-title{
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:22px;
-  color:var(--chalk);
-  margin-bottom:4px;
-}
-
-.auth-sub{
-  font-size:12.5px;
-  color:var(--chalk-dim);
-  margin-bottom:20px;
-}
-
-.auth-tabs{
-  display:flex;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:14px;
-  overflow:hidden;
-  margin-bottom:20px;
-  background:rgba(8,27,51,.35);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
-
-.auth-tab{
-  flex:1;
-  appearance:none;
-  -webkit-appearance:none;
-  background:transparent;
-  border:none;
-  color:var(--chalk-dim);
-  font-family:'Inter',sans-serif;
-  font-weight:600;
-  font-size:13px;
-  padding:10px 6px;
-  cursor:pointer;
-  transition:transform .12s ease,color .15s ease,background .15s ease;
-}
-
-.auth-tab.active{
-  background:rgba(244,196,48,.92);
-  color:var(--ink);
-}
-
-.auth-form{
-  display:none;
-  flex-direction:column;
-  gap:12px;
-}
-
-.auth-form.active{
-  display:flex;
-}
-
-.field-label{
-  font-size:11.5px;
-  color:var(--chalk-dim);
-  margin-bottom:5px;
-  display:block;
-}
-
-.field-label .req{
-  color:var(--amber);
-}
-
-.auth-form input[type="text"],
-.auth-form input[type="email"],
-.auth-form input[type="date"]{
-  width:100%;
-  appearance:none;
-  -webkit-appearance:none;
-  background:rgba(8,27,51,.42);
-  border:1px solid rgba(255,255,255,.13);
-  border-radius:13px;
-  color:var(--chalk);
-  font-family:'Inter',sans-serif;
-  font-size:14px;
-  padding:10px 11px;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-}
-
-.auth-form input:focus{
-  outline:2px solid rgba(244,196,48,.8);
-  outline-offset:2px;
-}
-
-.photo-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.photo-preview{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  background:var(--pitch-mid);
-  border:1px solid var(--pitch-line);
-  object-fit:cover;
-  flex-shrink:0;
-}
-
-.file-btn{
-  font-size:12.5px;
-  color:var(--chalk-dim);
-  appearance:none;
-  -webkit-appearance:none;
-  background:rgba(18,62,119,.35);
-  border:1px solid rgba(255,255,255,.13);
-  border-radius:13px;
-  padding:8px 12px;
-  cursor:pointer;
-  font-family:'Inter',sans-serif;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
-
-.auth-submit{
-  margin-top:6px;
-  background:rgba(244,196,48,.94);
-  color:var(--ink);
-  border:none;
-  border-radius:13px;
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:14px;
-  letter-spacing:.02em;
-  padding:12px;
-  cursor:pointer;
-  box-shadow:
-    0 6px 18px rgba(244,196,48,.18),
-    inset 0 1px 0 rgba(255,255,255,.18);
-  transition:transform .12s ease,box-shadow .15s ease,filter .15s ease;
-}
-
-.auth-submit:hover{
-  filter:brightness(1.06);
-  box-shadow:
-    0 8px 24px rgba(244,196,48,.25),
-    inset 0 1px 0 rgba(255,255,255,.22);
-}
-
-.auth-error{
-  background:rgba(193,68,60,.16);
-  border:1px solid rgba(193,68,60,.55);
-  border-radius:13px;
-  color:#F0A9A3;
-  font-size:12.5px;
-  padding:9px 11px;
-  display:none;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
-
-.auth-error.show{
-  display:block;
-}
-
-.auth-hint{
-  font-size:11px;
-  color:var(--chalk-dim);
-  margin-top:2px;
-}
-
-/* ================= USER BAR ================= */
-
-.user-bar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:rgba(8,27,51,.62);
-  padding:9px 16px;
-  border:0;
-  border-bottom:1px solid rgba(255,255,255,.10);
-  border-radius:0 0 18px 18px;
-  box-shadow:0 5px 20px rgba(0,0,0,.16);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-
-.user-bar-left{
-  display:flex;
-  align-items:center;
-  gap:9px;
-}
-
-.user-avatar{
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  object-fit:cover;
-  background:var(--amber);
-  flex-shrink:0;
-}
-
-.user-avatar-fallback{
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:var(--amber);
-  color:var(--ink);
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:11px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.user-info{
-  font-size:12.5px;
-  line-height:1.35;
-}
-
-.user-info .u-name{
-  font-weight:600;
-  color:var(--chalk);
-}
-
-.user-info .u-club{
-  color:var(--chalk-dim);
-}
-
-.logout-btn{
-  appearance:none;
-  -webkit-appearance:none;
-  background:rgba(18,62,119,.35);
-  border:1px solid rgba(255,255,255,.13);
-  color:var(--chalk-dim);
-  font-size:11.5px;
-  padding:6px 10px;
-  cursor:pointer;
-  font-family:'Inter',sans-serif;
-  border-radius:12px;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
-
-/* ================= PROFILE MODAL ================= */
-
-.profile-modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(2,10,22,.72);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px 18px;
-  z-index:200;
-  overflow-y:auto;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-}
-
-.profile-modal-overlay.open{
-  display:flex;
-}
-
-.profile-modal-card{
-  width:100%;
-  max-width:380px;
-  background:rgba(18,62,119,.58);
-  border-radius:24px;
-  padding:28px 22px 24px;
-  position:relative;
-  box-shadow:
-    0 25px 70px rgba(0,0,0,.45),
-    inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.modal-close{
-  position:absolute;
-  top:8px;
-  right:8px;
-  appearance:none;
-  -webkit-appearance:none;
-  background:transparent;
-  border:none;
-  color:var(--chalk-dim);
-  font-size:24px;
-  line-height:1;
-  cursor:pointer;
-  padding:8px;
-}
-
-.profile-photo-wrap{
-  display:flex;
-  justify-content:center;
-  margin-bottom:14px;
-}
-
-.profile-photo,
-.profile-photo-fallback{
-  width:76px;
-  height:76px;
-  border-radius:50%;
-  object-fit:cover;
-  background:var(--amber);
-}
-
-.profile-photo-fallback{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:24px;
-  color:var(--ink);
-}
-
-.profile-name{
-  text-align:center;
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:20px;
-  color:var(--chalk);
-}
-
-.profile-club-badge{
-  text-align:center;
-  font-size:12px;
-  color:var(--chalk-dim);
-  margin-top:4px;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-
-.profile-stats-strip{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:17px;
-  padding:1px;
-  overflow:hidden;
-  margin:18px 0 20px;
-}
-
-.profile-stat{
-  background:rgba(10,46,92,.45);
-  border-radius:13px;
-  padding:12px 6px;
-  text-align:center;
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-}
-
-.profile-stat-value{
-  font-family:'Oswald',sans-serif;
-  font-weight:700;
-  font-size:20px;
-  color:var(--amber);
-}
-
-.profile-stat-label{
-  font-size:10px;
-  color:var(--chalk-dim);
-  margin-top:3px;
-}
-
-/* ================= MOTION ================= */
-
-@keyframes fadeSlideUp{
-  from{
-    opacity:0;
-    transform:translateY(8px);
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --pitch-dark:#0A2E5C;
+    --pitch-mid:#123E77;
+    --pitch-line:#2E5FA0;
+    --chalk:#F3F1E7;
+    --chalk-dim:#B9C6DC;
+    --amber:#F4C430;
+    --ink:#081B33;
+    --red-card:#C1443C;
+    --yellow-card:#F4C430;
   }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
 
-@keyframes popIn{
-  from{
-    opacity:0;
-    transform:scale(.97);
+  html{
+    background:var(--ink);
+    color-scheme:dark;
   }
-  to{
-    opacity:1;
-    transform:scale(1);
-  }
-}
 
-@media(prefers-reduced-motion:reduce){
   *{
-    animation-duration:.001ms!important;
-    transition-duration:.001ms!important;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
   }
-}
 
-nav button,
-.auth-tab,
-.auth-submit,
-.logout-btn,
-.file-btn,
-.modal-close{
-  transition:transform .12s ease,color .15s ease,background-color .15s ease;
-}
+  body{
+    background:var(--ink);
+    min-height:100vh;
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
 
-nav button:active,
-.auth-tab:active,
-.auth-submit:active,
-.logout-btn:active,
-.file-btn:active,
-.modal-close:active{
-  transform:scale(.94);
-}
+  .num{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+  }
 
-.view.active{
-  animation:fadeSlideUp .28s ease;
-}
+  /* ================= HEADER ================= */
 
-.auth-form.active{
-  animation:fadeSlideUp .22s ease;
-}
+  header{
+    background:linear-gradient(
+      180deg,
+      var(--pitch-dark) 0%,
+      var(--pitch-mid) 100%
+    );
+    padding:28px 20px 22px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:2px solid var(--amber);
+  }
 
-.auth-card{
-  animation:popIn .32s ease;
-}
+  header::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.035) 0 2px,
+      transparent 2px 46px
+    );
+    pointer-events:none;
+  }
 
-#app-content.entering{
-  animation:fadeSlideUp .32s ease;
-}
+  header::after{
+    content:"";
+    position:absolute;
+    top:-60%;
+    left:50%;
+    width:340px;
+    height:340px;
+    transform:translateX(-50%);
+    background:radial-gradient(
+      circle,
+      rgba(244,196,48,0.16) 0%,
+      rgba(244,196,48,0) 70%
+    );
+    pointer-events:none;
+  }
 
-/* MOBIEL */
+  .header-inner{
+    position:relative;
+    z-index:1;
+  }
 
-@media(max-width:600px){
-  .auth-card,
-  .profile-modal-card{
-    border-radius:22px;
+  .comp-label{
+    font-size:12px;
+    letter-spacing:0.14em;
+    color:var(--chalk-dim);
+    text-transform:uppercase;
+    font-weight:500;
+  }
+
+  h1{
+    font-family:'Oswald',sans-serif;
+    font-size:32px;
+    font-weight:700;
+    letter-spacing:0.01em;
+    margin-top:4px;
+    color:var(--chalk);
+  }
+
+  .season-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-top:14px;
+    font-size:13px;
+    color:var(--chalk-dim);
+    gap:10px;
+  }
+
+  .season-row .matchday{
+    background:var(--amber);
+    color:var(--ink);
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    padding:4px 10px;
+    font-size:13px;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    box-shadow:0 0 14px rgba(244,196,48,0.35);
+    white-space:nowrap;
+  }
+
+  .live-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--ink);
+    animation:pulseDot 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulseDot{
+    0%,100%{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    50%{
+      opacity:0.35;
+      transform:scale(0.7);
+    }
+  }
+
+  /* ================= NAV ================= */
+
+  nav{
+    display:flex;
+    background:var(--pitch-dark);
+    border-bottom:1px solid var(--pitch-line);
+    position:sticky;
+    top:0;
+    z-index:10;
+    overflow-x:auto;
+  }
+
+  nav button{
+    flex:1;
+    min-width:100px;
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    border:none;
+    color:var(--chalk-dim);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    padding:14px 10px;
+    cursor:pointer;
+    position:relative;
+    transition:color .15s ease;
+  }
+
+  nav button.active{
+    color:var(--chalk);
+  }
+
+  nav button.active::after{
+    content:"";
+    position:absolute;
+    left:16%;
+    right:16%;
+    bottom:0;
+    height:3px;
+    background:var(--amber);
+  }
+
+  main{
+    padding:18px 16px 8px;
+    max-width:720px;
+    margin:0 auto;
+  }
+
+  .view{
+    display:none;
+  }
+
+  .view.active{
+    display:block;
+  }
+
+  .section-heading{
+    font-family:'Oswald',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--amber);
+    margin:22px 0 10px;
+  }
+
+  .section-heading:first-child{
+    margin-top:4px;
+  }
+
+  /* ================= QUICK STATS ================= */
+
+  .stats-strip{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--pitch-line);
+    border:1px solid var(--pitch-line);
+    margin-bottom:22px;
+  }
+
+  .stat-cell{
+    background:var(--pitch-dark);
+    padding:14px 10px;
+    text-align:center;
+  }
+
+  .stat-value{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    color:var(--amber);
+  }
+
+  .stat-label{
+    font-size:10.5px;
+    color:var(--chalk-dim);
+    margin-top:3px;
+    letter-spacing:0.02em;
+  }
+
+  /* ================= STANDINGS ================= */
+
+  .table-wrap{
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+
+  thead th{
+    text-align:center;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    color:var(--chalk-dim);
+    font-size:11px;
+    padding:9px 4px;
+    border-bottom:1px solid var(--pitch-line);
+  }
+
+  thead th.team-col{
+    text-align:left;
+    padding-left:12px;
+  }
+
+  tbody td{
+    text-align:center;
+    padding:9px 4px;
+    color:var(--chalk);
+    border-bottom:1px solid rgba(46,115,80,0.35);
+  }
+
+  tbody tr:last-child td{
+    border-bottom:none;
+  }
+
+  td.team-col{
+    text-align:left;
+    padding-left:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:500;
+  }
+
+  .pos{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    width:18px;
+    display:inline-block;
+    text-align:center;
+    color:var(--chalk-dim);
+  }
+
+  tr.zone-cup .pos{
+    color:var(--amber);
+  }
+
+  tr.zone-cup{
+    box-shadow:inset 3px 0 0 var(--amber);
+  }
+
+  tr.zone-drop{
+    box-shadow:inset 3px 0 0 var(--red-card);
+  }
+
+  td.pts{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    color:var(--amber);
+  }
+
+  tr.zone-cup td.pts{
+    text-shadow:0 0 10px rgba(244,196,48,0.7);
+  }
+
+  .crest{
+    width:22px;
+    height:24px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Oswald',sans-serif;
+    font-size:9px;
+    font-weight:700;
+    color:var(--ink);
+    clip-path:polygon(
+      50% 0%,
+      100% 18%,
+      100% 65%,
+      50% 100%,
+      0% 65%,
+      0% 18%
+    );
+    box-shadow:0 1px 3px rgba(0,0,0,0.35);
+  }
+
+  .legend{
+    display:flex;
+    gap:16px;
+    margin-top:10px;
+    font-size:11px;
+    color:var(--chalk-dim);
+    flex-wrap:wrap;
+  }
+
+  .legend span{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .dot{
+    width:8px;
+    height:8px;
+    display:inline-block;
+  }
+
+  .dot.cup{
+    background:var(--amber);
+  }
+
+  .dot.drop{
+    background:var(--red-card);
+  }
+
+  /* ================= FIXTURES ================= */
+
+  .fixture-day{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--chalk-dim);
+    margin:16px 0 8px;
+  }
+
+  .fixture-day:first-of-type{
+    margin-top:0;
   }
 
   .fixture{
-    border-radius:15px;
+    display:grid;
+    grid-template-columns:1fr 56px 1fr;
+    align-items:center;
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+    padding:12px 10px;
+    margin-bottom:6px;
+    font-size:13px;
+    gap:6px;
+    transition:
+      border-color .15s ease,
+      transform .12s ease;
   }
 
-  .stats-strip,
-  .table-wrap{
-    border-radius:17px;
+  .fixture:active{
+    transform:scale(0.98);
+    border-color:var(--amber);
   }
-}
+
+  .fixture .home{
+    text-align:right;
+    font-weight:500;
+  }
+
+  .fixture .away{
+    text-align:left;
+    font-weight:500;
+  }
+
+  .fixture .score{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    text-align:center;
+    font-size:15px;
+    color:var(--amber);
+  }
+
+  .fixture .score.tbd{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12px;
+    color:var(--chalk-dim);
+  }
+
+  /* ================= TOPSCORERS ================= */
+
+  .scorer-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 4px;
+    border-bottom:1px solid rgba(46,115,80,0.35);
+    transition:
+      transform .12s ease,
+      background-color .15s ease;
+  }
+
+  .scorer-row:active{
+    transform:scale(0.98);
+    background-color:rgba(244,196,48,0.06);
+  }
+
+  .scorer-row:first-child{
+    padding-top:0;
+  }
+
+  .scorer-row.clickable{
+    cursor:pointer;
+  }
+
+  .scorer-rank{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:18px;
+    width:24px;
+    color:var(--chalk-dim);
+  }
+
+  .scorer-row:nth-child(1) .scorer-rank{
+    color:var(--amber);
+  }
+
+  .scorer-info{
+    flex:1;
+  }
+
+  .scorer-name{
+    font-weight:600;
+    font-size:14px;
+  }
+
+  .scorer-team{
+    font-size:12px;
+    color:var(--chalk-dim);
+    margin-top:1px;
+  }
+
+  .scorer-goals{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--amber);
+  }
+
+  .goal-bar-track{
+    height:4px;
+    background:rgba(255,255,255,0.08);
+    margin-top:8px;
+    overflow:hidden;
+  }
+
+  .goal-bar-fill{
+    height:100%;
+    background:linear-gradient(
+      90deg,
+      var(--pitch-line),
+      var(--amber)
+    );
+  }
+
+  /* ==================================================
+     LEDEN
+     ELK LID KRIJGT EEN EIGEN GLASS RECTANGLE
+     ================================================== */
+
+  #leden-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .member-card{
+    width:100%;
+    min-height:66px;
+
+    position:relative;
+    overflow:hidden;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    padding:11px 13px;
+
+    /* GLASS EFFECT */
+    background:linear-gradient(
+      135deg,
+      rgba(255,255,255,0.085),
+      rgba(255,255,255,0.025)
+    );
+
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+
+    /* RECTANGLE */
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:10px;
+
+    box-shadow:
+      0 5px 18px rgba(0,0,0,0.20),
+      inset 0 1px 0 rgba(255,255,255,0.07);
+
+    cursor:pointer;
+
+    transition:
+      transform .15s ease,
+      background .15s ease,
+      border-color .15s ease,
+      box-shadow .15s ease;
+  }
+
+  /* Subtiele glas-glans */
+  .member-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:linear-gradient(
+      180deg,
+      rgba(255,255,255,0.055),
+      transparent 45%
+    );
+
+    pointer-events:none;
+  }
+
+  .member-card:hover{
+    background:linear-gradient(
+      135deg,
+      rgba(255,255,255,0.115),
+      rgba(255,255,255,0.035)
+    );
+
+    border-color:rgba(255,255,255,0.23);
+
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.27),
+      inset 0 1px 0 rgba(255,255,255,0.09);
+
+    transform:translateY(-1px);
+  }
+
+  .member-card:active{
+    transform:scale(0.98);
+
+    background:rgba(255,255,255,0.08);
+
+    border-color:rgba(244,196,48,0.4);
+  }
+
+  .member-avatar{
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+    flex-shrink:0;
+
+    background:var(--pitch-mid);
+
+    border:1px solid rgba(255,255,255,0.16);
+
+    position:relative;
+    z-index:1;
+  }
+
+  .member-avatar-fallback{
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(244,196,48,0.92);
+    color:var(--ink);
+
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:12px;
+
+    border:1px solid rgba(255,255,255,0.16);
+
+    position:relative;
+    z-index:1;
+  }
+
+  .member-info{
+    flex:1;
+    min-width:0;
+    position:relative;
+    z-index:1;
+  }
+
+  .member-name{
+    font-weight:600;
+    font-size:14px;
+    color:var(--chalk);
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .member-club{
+    font-size:11.5px;
+    color:var(--chalk-dim);
+    margin-top:3px;
+  }
+
+  /* ================= FOOTER ================= */
+
+  footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--chalk-dim);
+    padding:24px 16px 0;
+  }
+
+  /* ================= AUTH SCREEN ================= */
+
+  #auth-screen{
+    min-height:100vh;
+    width:100%;
+    background:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 18px;
+  }
+
+  .auth-card{
+    width:100%;
+    max-width:380px;
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+    padding:26px 22px 24px;
+  }
+
+  .auth-title{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    color:var(--chalk);
+    margin-bottom:4px;
+  }
+
+  .auth-sub{
+    font-size:12.5px;
+    color:var(--chalk-dim);
+    margin-bottom:20px;
+  }
+
+  .auth-tabs{
+    display:flex;
+    border:1px solid var(--pitch-line);
+    margin-bottom:20px;
+  }
+
+  .auth-tab{
+    flex:1;
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    border:none;
+    color:var(--chalk-dim);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    padding:10px 6px;
+    cursor:pointer;
+  }
+
+  .auth-tab.active{
+    background:var(--amber);
+    color:var(--ink);
+  }
+
+  .auth-form{
+    display:none;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .auth-form.active{
+    display:flex;
+  }
+
+  .field-label{
+    font-size:11.5px;
+    color:var(--chalk-dim);
+    margin-bottom:5px;
+    display:block;
+  }
+
+  .field-label .req{
+    color:var(--amber);
+  }
+
+  .auth-form input[type="text"],
+  .auth-form input[type="email"],
+  .auth-form input[type="date"]{
+    width:100%;
+    appearance:none;
+    -webkit-appearance:none;
+    background:var(--ink);
+    border:1px solid var(--pitch-line);
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    padding:10px 11px;
+  }
+
+  .auth-form input:focus{
+    outline:2px solid var(--amber);
+    outline-offset:1px;
+  }
+
+  .photo-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .photo-preview{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:var(--pitch-mid);
+    border:1px solid var(--pitch-line);
+    object-fit:cover;
+    flex-shrink:0;
+  }
+
+  .file-btn{
+    font-size:12.5px;
+    color:var(--chalk-dim);
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    border:1px solid var(--pitch-line);
+    padding:8px 12px;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+
+  .auth-submit{
+    margin-top:6px;
+    background:var(--amber);
+    color:var(--ink);
+    border:none;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.02em;
+    padding:12px;
+    cursor:pointer;
+  }
+
+  .auth-submit:disabled{
+    opacity:0.6;
+    cursor:not-allowed;
+  }
+
+  .auth-error{
+    background:rgba(193,68,60,0.14);
+    border:1px solid var(--red-card);
+    color:#F0A9A3;
+    font-size:12.5px;
+    padding:9px 11px;
+    display:none;
+  }
+
+  .auth-error.show{
+    display:block;
+  }
+
+  .auth-hint{
+    font-size:11px;
+    color:var(--chalk-dim);
+    margin-top:2px;
+  }
+
+  /* ================= USER BAR ================= */
+
+  .user-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--ink);
+    padding:9px 16px;
+    border-bottom:1px solid var(--pitch-line);
+  }
+
+  .user-bar-left{
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+
+  .user-avatar{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    object-fit:cover;
+    background:var(--amber);
+    flex-shrink:0;
+  }
+
+  .user-avatar-fallback{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:var(--amber);
+    color:var(--ink);
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .user-info{
+    font-size:12.5px;
+    line-height:1.35;
+  }
+
+  .user-info .u-name{
+    font-weight:600;
+    color:var(--chalk);
+  }
+
+  .user-info .u-club{
+    color:var(--chalk-dim);
+  }
+
+  .logout-btn{
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    border:1px solid var(--pitch-line);
+    color:var(--chalk-dim);
+    font-size:11.5px;
+    padding:6px 10px;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+
+  /* ================= PROFILE MODAL ================= */
+
+  .profile-modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(8,27,51,0.86);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px 18px;
+    z-index:200;
+    overflow-y:auto;
+  }
+
+  .profile-modal-overlay.open{
+    display:flex;
+  }
+
+  .profile-modal-card{
+    width:100%;
+    max-width:380px;
+    background:var(--pitch-dark);
+    border:1px solid var(--pitch-line);
+    padding:28px 22px 24px;
+    position:relative;
+    animation:popIn .25s ease;
+  }
+
+  .modal-close{
+    position:absolute;
+    top:8px;
+    right:8px;
+    appearance:none;
+    background:transparent;
+    border:none;
+    color:var(--chalk-dim);
+    font-size:24px;
+    line-height:1;
+    cursor:pointer;
+    padding:8px;
+  }
+
+  .profile-photo-wrap{
+    display:flex;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+
+  .profile-photo,
+  .profile-photo-fallback{
+    width:76px;
+    height:76px;
+    border-radius:50%;
+    object-fit:cover;
+    background:var(--amber);
+  }
+
+  .profile-photo-fallback{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:24px;
+    color:var(--ink);
+  }
+
+  .profile-name{
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--chalk);
+  }
+
+  .profile-club-badge{
+    text-align:center;
+    font-size:12px;
+    color:var(--chalk-dim);
+    margin-top:4px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+  }
+
+  .profile-stats-strip{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--pitch-line);
+    border:1px solid var(--pitch-line);
+    margin:18px 0 20px;
+  }
+
+  .profile-stat{
+    background:var(--pitch-dark);
+    padding:12px 6px;
+    text-align:center;
+  }
+
+  .profile-stat-value{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--amber);
+  }
+
+  .profile-stat-label{
+    font-size:10px;
+    color:var(--chalk-dim);
+    margin-top:3px;
+  }
+
+  /* ================= MOTION ================= */
+
+  @keyframes fadeSlideUp{
+    from{
+      opacity:0;
+      transform:translateY(8px);
+    }
+
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
+  }
+
+  @keyframes popIn{
+    from{
+      opacity:0;
+      transform:scale(0.97);
+    }
+
+    to{
+      opacity:1;
+      transform:scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{
+      animation-duration:0.001ms !important;
+      transition-duration:0.001ms !important;
+    }
+  }
+
+  nav button,
+  .auth-tab,
+  .auth-submit,
+  .logout-btn,
+  .file-btn,
+  .modal-close{
+    transition:
+      transform .12s ease,
+      color .15s ease,
+      background-color .15s ease;
+  }
+
+  nav button:active,
+  .auth-tab:active,
+  .auth-submit:active,
+  .logout-btn:active,
+  .file-btn:active,
+  .modal-close:active{
+    transform:scale(0.94);
+  }
+
+  .view.active{
+    animation:fadeSlideUp .28s ease;
+  }
+
+  .auth-form.active{
+    animation:fadeSlideUp .22s ease;
+  }
+
+  .auth-card{
+    animation:popIn .32s ease;
+  }
+
+  #app-content.entering{
+    animation:fadeSlideUp .32s ease;
+  }
+
+  @media(max-width:520px){
+    .season-row{
+      align-items:flex-start;
+      flex-direction:column;
+    }
+
+    .season-row .matchday{
+      align-self:flex-start;
+    }
+  }
 </style>
 </head>
 
 <body>
 
-<!-- ================= GELUID ================= -->
-
 <script>
-let __audioCtx=null;
+  /* ==================================================
+     GELUIDSEFFECTEN
+     ================================================== */
 
-function getAudioCtx(){
-  if(!__audioCtx){
-    const Ctx=window.AudioContext||window.webkitAudioContext;
-    if(!Ctx)return null;
-    __audioCtx=new Ctx();
+  let __audioCtx = null;
+
+  function getAudioCtx(){
+    if(!__audioCtx){
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return null;
+      __audioCtx = new Ctx();
+    }
+
+    if(__audioCtx.state === 'suspended'){
+      __audioCtx.resume();
+    }
+
+    return __audioCtx;
   }
 
-  if(__audioCtx.state==='suspended')__audioCtx.resume();
-  return __audioCtx;
-}
+  function playClickSound(
+    freq = 680,
+    duration = 0.06,
+    volume = 0.10
+  ){
+    const ctx = getAudioCtx();
+    if(!ctx) return;
 
-function playClickSound(freq=680,duration=.06,volume=.10){
-  const ctx=getAudioCtx();
-  if(!ctx)return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-  const osc=ctx.createOscillator();
-  const gain=ctx.createGain();
+    osc.type = 'sine';
 
-  osc.type='sine';
-  osc.frequency.setValueAtTime(freq,ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(
-    freq*.62,
-    ctx.currentTime+duration
-  );
+    osc.frequency.setValueAtTime(
+      freq,
+      ctx.currentTime
+    );
 
-  gain.gain.setValueAtTime(.0001,ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(
-    volume,
-    ctx.currentTime+.007
-  );
+    osc.frequency.exponentialRampToValueAtTime(
+      freq * 0.62,
+      ctx.currentTime + duration
+    );
 
-  gain.gain.exponentialRampToValueAtTime(
-    .0001,
-    ctx.currentTime+duration
-  );
+    gain.gain.setValueAtTime(
+      0.0001,
+      ctx.currentTime
+    );
 
-  osc.connect(gain);
-  gain.connect(ctx.destination);
+    gain.gain.exponentialRampToValueAtTime(
+      volume,
+      ctx.currentTime + 0.007
+    );
 
-  osc.start();
-  osc.stop(ctx.currentTime+duration+.02);
-}
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      ctx.currentTime + duration
+    );
 
-window.playClickSound=playClickSound;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+
+    osc.stop(
+      ctx.currentTime + duration + 0.02
+    );
+  }
+
+  window.playClickSound = playClickSound;
 </script>
 
-<!-- ================= AUTH ================= -->
+
+<!-- ================= AUTH SCREEN ================= -->
 
 <div id="auth-screen">
 
@@ -1120,66 +1198,113 @@ window.playClickSound=playClickSound;
     </div>
 
     <div class="auth-tabs">
-      <button class="auth-tab active" data-tab="login">
+
+      <button
+        class="auth-tab active"
+        data-tab="login"
+      >
         Inloggen
       </button>
 
-      <button class="auth-tab" data-tab="register">
+      <button
+        class="auth-tab"
+        data-tab="register"
+      >
         Nieuw account
       </button>
+
     </div>
 
-    <div class="auth-error" id="auth-error"></div>
+    <div
+      class="auth-error"
+      id="auth-error"
+    ></div>
+
 
     <!-- LOGIN -->
 
-    <form class="auth-form active" id="login-form">
+    <form
+      class="auth-form active"
+      id="login-form"
+    >
 
       <div>
         <label class="field-label">
-          Voornaam <span class="req">*</span>
+          Voornaam
+          <span class="req">*</span>
         </label>
 
-        <input type="text" id="login-firstname" required>
+        <input
+          type="text"
+          id="login-firstname"
+          required
+        >
       </div>
+
 
       <div>
         <label class="field-label">
-          Achternaam <span class="req">*</span>
+          Achternaam
+          <span class="req">*</span>
         </label>
 
-        <input type="text" id="login-lastname" required>
+        <input
+          type="text"
+          id="login-lastname"
+          required
+        >
       </div>
 
-      <button type="submit" class="auth-submit">
+
+      <button
+        type="submit"
+        class="auth-submit"
+      >
         Inloggen
       </button>
 
     </form>
 
+
     <!-- REGISTER -->
 
-    <form class="auth-form" id="register-form">
+    <form
+      class="auth-form"
+      id="register-form"
+    >
 
       <div>
         <label class="field-label">
-          Voornaam <span class="req">*</span>
+          Voornaam
+          <span class="req">*</span>
         </label>
 
-        <input type="text" id="reg-firstname" required>
+        <input
+          type="text"
+          id="reg-firstname"
+          required
+        >
       </div>
+
 
       <div>
         <label class="field-label">
-          Achternaam <span class="req">*</span>
+          Achternaam
+          <span class="req">*</span>
         </label>
 
-        <input type="text" id="reg-lastname" required>
+        <input
+          type="text"
+          id="reg-lastname"
+          required
+        >
       </div>
+
 
       <div>
         <label class="field-label">
-          E-mailadres <span class="req">*</span>
+          E-mailadres
+          <span class="req">*</span>
         </label>
 
         <input
@@ -1190,17 +1315,25 @@ window.playClickSound=playClickSound;
         >
       </div>
 
+
       <div>
         <label class="field-label">
-          Geboortedatum <span class="req">*</span>
+          Geboortedatum
+          <span class="req">*</span>
         </label>
 
-        <input type="date" id="reg-birthdate" required>
+        <input
+          type="date"
+          id="reg-birthdate"
+          required
+        >
       </div>
+
 
       <div>
         <label class="field-label">
-          Club <span class="req">*</span>
+          Club
+          <span class="req">*</span>
         </label>
 
         <input
@@ -1216,7 +1349,9 @@ window.playClickSound=playClickSound;
         </div>
       </div>
 
+
       <div>
+
         <label class="field-label">
           Profielfoto
         </label>
@@ -1245,33 +1380,49 @@ window.playClickSound=playClickSound;
           >
 
         </div>
+
       </div>
 
-      <button type="submit" class="auth-submit">
+
+      <button
+        type="submit"
+        class="auth-submit"
+      >
         Account aanmaken
       </button>
 
+
       <div class="auth-sub">
-        Bij het aanmaken van een account zul je een mail ontvangen
-        van rvstteam e-mail adres. (dit is een automatisch gestuurde mail!)
+        Bij het aanmaken van een account zul je een mail
+        ontvangen van rvstteam e-mail adres.
+        (dit is een automatisch gestuurde mail!)
       </div>
 
     </form>
 
   </div>
+
 </div>
+
 
 <!-- ================= PROFILE MODAL ================= -->
 
-<div class="profile-modal-overlay" id="profile-modal">
+<div
+  class="profile-modal-overlay"
+  id="profile-modal"
+>
 
   <div class="profile-modal-card">
 
-    <button class="modal-close" id="profile-close-btn">
+    <button
+      class="modal-close"
+      id="profile-close-btn"
+    >
       &times;
     </button>
 
-    <!-- VIEW -->
+
+    <!-- VIEW MODE -->
 
     <div id="profile-view">
 
@@ -1291,49 +1442,70 @@ window.playClickSound=playClickSound;
 
       </div>
 
-      <div class="profile-name" id="profile-view-name"></div>
+
+      <div
+        class="profile-name"
+        id="profile-view-name"
+      ></div>
+
 
       <div
         class="profile-club-badge"
         id="profile-view-club"
       ></div>
 
+
       <div class="profile-stats-strip">
 
         <div class="profile-stat">
+
           <div
             class="profile-stat-value"
             id="profile-view-goals"
-          >0</div>
+          >
+            0
+          </div>
 
           <div class="profile-stat-label">
             Goals
           </div>
+
         </div>
 
+
         <div class="profile-stat">
+
           <div
             class="profile-stat-value"
             id="profile-view-assists"
-          >0</div>
+          >
+            0
+          </div>
 
           <div class="profile-stat-label">
             Assists
           </div>
+
         </div>
 
+
         <div class="profile-stat">
+
           <div
             class="profile-stat-value"
             id="profile-view-matches"
-          >0</div>
+          >
+            0
+          </div>
 
           <div class="profile-stat-label">
             Wedstrijden
           </div>
+
         </div>
 
       </div>
+
 
       <button
         class="auth-submit"
@@ -1345,7 +1517,8 @@ window.playClickSound=playClickSound;
 
     </div>
 
-    <!-- EDIT -->
+
+    <!-- EDIT MODE -->
 
     <form
       class="auth-form"
@@ -1354,6 +1527,7 @@ window.playClickSound=playClickSound;
     >
 
       <div>
+
         <label class="field-label">
           Profielfoto
         </label>
@@ -1382,53 +1556,92 @@ window.playClickSound=playClickSound;
           >
 
         </div>
+
       </div>
 
+
       <div>
+
         <label class="field-label">
-          Voornaam <span class="req">*</span>
+          Voornaam
+          <span class="req">*</span>
         </label>
 
-        <input type="text" id="edit-firstname" required>
+        <input
+          type="text"
+          id="edit-firstname"
+          required
+        >
+
       </div>
 
+
       <div>
+
         <label class="field-label">
-          Achternaam <span class="req">*</span>
+          Achternaam
+          <span class="req">*</span>
         </label>
 
-        <input type="text" id="edit-lastname" required>
+        <input
+          type="text"
+          id="edit-lastname"
+          required
+        >
+
       </div>
 
+
       <div>
+
         <label class="field-label">
-          Club <span class="req">*</span>
+          Club
+          <span class="req">*</span>
         </label>
 
-        <input type="text" id="edit-club" required>
+        <input
+          type="text"
+          id="edit-club"
+          required
+        >
 
         <div class="auth-hint">
           Geldige clubs: TOGB, BVCB, CVV, SoccerBoys
+          (hoofdletters maken niet uit)
         </div>
+
       </div>
+
 
       <div
         class="auth-error"
         id="profile-edit-error"
       ></div>
 
-      <button type="submit" class="auth-submit">
+
+      <button
+        type="submit"
+        class="auth-submit"
+      >
         Opslaan
       </button>
 
     </form>
 
   </div>
+
 </div>
 
-<!-- ================= APP ================= -->
 
-<div id="app-content" style="display:none;">
+<!-- ================= APP CONTENT ================= -->
+
+<div
+  id="app-content"
+  style="display:none;"
+>
+
+
+  <!-- USER BAR -->
 
   <div class="user-bar">
 
@@ -1462,6 +1675,7 @@ window.playClickSound=playClickSound;
 
     </div>
 
+
     <button
       class="logout-btn"
       id="logout-btn"
@@ -1470,6 +1684,7 @@ window.playClickSound=playClickSound;
     </button>
 
   </div>
+
 
   <!-- HEADER -->
 
@@ -1492,8 +1707,11 @@ window.playClickSound=playClickSound;
         </span>
 
         <span class="matchday">
+
           <span class="live-dot"></span>
+
           SPEELRONDE 1
+
         </span>
 
       </div>
@@ -1501,6 +1719,7 @@ window.playClickSound=playClickSound;
     </div>
 
   </header>
+
 
   <!-- NAV -->
 
@@ -1513,23 +1732,31 @@ window.playClickSound=playClickSound;
       Stand
     </button>
 
-    <button data-view="programma">
+    <button
+      data-view="programma"
+    >
       Programma
     </button>
 
-    <button data-view="topscorers">
+    <button
+      data-view="topscorers"
+    >
       Topscorers
     </button>
 
-    <button data-view="leden">
+    <button
+      data-view="leden"
+    >
       Leden
     </button>
 
   </nav>
 
+
   <main>
 
-    <!-- STAND -->
+
+    <!-- ================= STAND ================= -->
 
     <div
       class="view active"
@@ -1541,9 +1768,11 @@ window.playClickSound=playClickSound;
         id="stats-strip"
       ></div>
 
+
       <div class="section-heading">
         Ranglijst
       </div>
+
 
       <div class="table-wrap">
 
@@ -1552,22 +1781,36 @@ window.playClickSound=playClickSound;
           <thead>
 
             <tr>
+
               <th>#</th>
-              <th class="team-col">Club</th>
+
+              <th class="team-col">
+                Club
+              </th>
+
               <th>W</th>
+
               <th>G</th>
+
               <th>V</th>
+
               <th>DS</th>
+
               <th>Pt</th>
+
             </tr>
 
           </thead>
 
-          <tbody id="standings-body"></tbody>
+
+          <tbody
+            id="standings-body"
+          ></tbody>
 
         </table>
 
       </div>
+
 
       <div class="legend">
 
@@ -1585,7 +1828,8 @@ window.playClickSound=playClickSound;
 
     </div>
 
-    <!-- PROGRAMMA -->
+
+    <!-- ================= PROGRAMMA ================= -->
 
     <div
       class="view"
@@ -1598,6 +1842,7 @@ window.playClickSound=playClickSound;
 
       <div id="results-list"></div>
 
+
       <div class="section-heading">
         Speelronde 1 — programma
       </div>
@@ -1606,7 +1851,8 @@ window.playClickSound=playClickSound;
 
     </div>
 
-    <!-- TOPSCORERS -->
+
+    <!-- ================= TOPSCORERS ================= -->
 
     <div
       class="view"
@@ -1621,7 +1867,8 @@ window.playClickSound=playClickSound;
 
     </div>
 
-    <!-- LEDEN -->
+
+    <!-- ================= LEDEN ================= -->
 
     <div
       class="view"
@@ -1632,6 +1879,7 @@ window.playClickSound=playClickSound;
         Alle leden
       </div>
 
+
       <div
         class="auth-hint"
         style="margin-bottom:10px;"
@@ -1639,11 +1887,19 @@ window.playClickSound=playClickSound;
         Tik op een lid om het profiel te bekijken.
       </div>
 
+
+      <!--
+        Elk lid wordt door JavaScript
+        automatisch als eigen glass rectangle
+        toegevoegd.
+      -->
+
       <div id="leden-list"></div>
 
     </div>
 
   </main>
+
 
   <footer>
     RVST Landsingerland 3B Street Cup Website
@@ -1651,1742 +1907,2466 @@ window.playClickSound=playClickSound;
 
 </div>
 
-<!-- ================= EMAILJS ================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-<!-- ================= FIREBASE ================= -->
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  /* ==================================================
+     FIREBASE
+     ================================================== */
 
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  onSnapshot,
-  orderBy,
-  serverTimestamp,
-  doc,
-  updateDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    initializeApp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-
-/* ================= FIREBASE ================= */
-
-const firebaseConfig={
-  apiKey:"AIzaSyAW-X3XYChG5AFwsXg8WNeL9wiMkonVaoc",
-  authDomain:"b-street-cup.firebaseapp.com",
-  projectId:"b-street-cup",
-  storageBucket:"b-street-cup.firebasestorage.app",
-  messagingSenderId:"476783560837",
-  appId:"1:476783560837:web:87ea8ffe7bc8e44ca441ec",
-  measurementId:"G-5VJHKWL2SG"
-};
-
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-const accountsCol=collection(db,"accounts");
-
-const VALID_CLUBS=[
-  "TOGB",
-  "BVCB",
-  "CVV",
-  "SoccerBoys"
-];
-
-const MAX_PHOTO_CHARS=700*1024;
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    where,
+    onSnapshot,
+    orderBy,
+    serverTimestamp,
+    doc,
+    updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-/* ================= CLUB ================= */
+  const firebaseConfig = {
 
-function normalizeClub(input){
+    apiKey:
+      "AIzaSyAW-X3XYChG5AFwsXg8WNeL9wiMkonVaoc",
 
-  const clean=(input||"").trim();
+    authDomain:
+      "b-street-cup.firebaseapp.com",
 
-  const match=VALID_CLUBS.find(
-    c=>c.toLowerCase()===clean.toLowerCase()
-  );
+    projectId:
+      "b-street-cup",
 
-  return match||null;
-}
+    storageBucket:
+      "b-street-cup.firebasestorage.app",
 
+    messagingSenderId:
+      "476783560837",
 
-/* ================= ERRORS ================= */
+    appId:
+      "1:476783560837:web:87ea8ffe7bc8e44ca441ec",
 
-const authError=document.getElementById("auth-error");
-
-function showAuthError(msg){
-  authError.textContent=msg;
-  authError.classList.add("show");
-}
-
-function clearAuthError(){
-  authError.classList.remove("show");
-  authError.textContent="";
-}
-
-
-/* ================= TABS ================= */
-
-document.querySelectorAll(".auth-tab").forEach(tab=>{
-
-  tab.addEventListener("click",()=>{
-
-    playClickSound();
-
-    document
-      .querySelectorAll(".auth-tab")
-      .forEach(t=>t.classList.remove("active"));
-
-    document
-      .querySelectorAll(".auth-form")
-      .forEach(f=>f.classList.remove("active"));
-
-    tab.classList.add("active");
-
-    document
-      .getElementById(tab.dataset.tab+"-form")
-      .classList.add("active");
-
-    clearAuthError();
-
-  });
-
-});
-
-
-/* ================= REG PHOTO ================= */
-
-const photoBtn=document.getElementById("reg-photo-btn");
-const photoInput=document.getElementById("reg-photo-input");
-const photoPreview=document.getElementById("reg-photo-preview");
-
-let regPhotoDataUrl=null;
-
-photoBtn.addEventListener("click",()=>{
-  playClickSound(560,.05,.08);
-  photoInput.click();
-});
-
-photoInput.addEventListener("change",()=>{
-
-  const file=photoInput.files[0];
-
-  if(!file)return;
-
-  const reader=new FileReader();
-
-  reader.onload=e=>{
-
-    regPhotoDataUrl=e.target.result;
-
-    photoPreview.src=regPhotoDataUrl;
-    photoPreview.style.display="block";
+    measurementId:
+      "G-5VJHKWL2SG"
 
   };
 
-  reader.readAsDataURL(file);
 
-});
+  const app =
+    initializeApp(firebaseConfig);
 
+  const db =
+    getFirestore(app);
 
-/* ================= REGISTER ================= */
-
-document
-.getElementById("register-form")
-.addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  clearAuthError();
-  playClickSound();
-
-  const firstname=
-    document.getElementById("reg-firstname").value.trim();
-
-  const lastname=
-    document.getElementById("reg-lastname").value.trim();
-
-  const email=
-    document.getElementById("reg-email").value.trim();
-
-  const birthdate=
-    document.getElementById("reg-birthdate").value;
-
-  const clubRaw=
-    document.getElementById("reg-club").value;
+  const accountsCol =
+    collection(db, 'accounts');
 
 
-  if(
-    !firstname||
-    !lastname||
-    !email||
-    !birthdate||
-    !clubRaw.trim()
-  ){
-
-    showAuthError(
-      "Vul alle verplichte velden in (voornaam, achternaam, e-mailadres, geboortedatum en club)."
-    );
-
-    return;
-  }
+  const VALID_CLUBS = [
+    "TOGB",
+    "BVCB",
+    "CVV",
+    "SoccerBoys"
+  ];
 
 
-  const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if(!emailPattern.test(email)){
-
-    showAuthError(
-      "Vul een geldig e-mailadres in."
-    );
-
-    return;
-  }
+  const MAX_PHOTO_CHARS =
+    700 * 1024;
 
 
-  const club=normalizeClub(clubRaw);
+  /* ==================================================
+     CLUB NORMALISEREN
+     ================================================== */
 
-  if(!club){
+  function normalizeClub(input){
 
-    showAuthError(
-      `"${clubRaw}" is geen geldige club. Kies uit: ${VALID_CLUBS.join(", ")}.`
-    );
+    const clean =
+      (input || "").trim();
 
-    return;
-  }
-
-
-  if(
-    regPhotoDataUrl &&
-    regPhotoDataUrl.length>MAX_PHOTO_CHARS
-  ){
-
-    showAuthError(
-      "Deze profielfoto is te groot. Kies een kleiner bestand."
-    );
-
-    return;
-  }
-
-
-  const firstnameLower=firstname.toLowerCase();
-  const lastnameLower=lastname.toLowerCase();
-
-  const submitBtn=e.target.querySelector(".auth-submit");
-
-  submitBtn.disabled=true;
-  submitBtn.textContent="Bezig...";
-
-
-  try{
-
-    const dupSnap=await getDocs(
-      query(
-        accountsCol,
-        where("firstnameLower","==",firstnameLower),
-        where("lastnameLower","==",lastnameLower)
-      )
-    );
-
-
-    if(!dupSnap.empty){
-
-      showAuthError(
-        'Er bestaat al een account met deze voor- en achternaam. Log in bij "Inloggen".'
+    const match =
+      VALID_CLUBS.find(
+        c =>
+          c.toLowerCase() ===
+          clean.toLowerCase()
       );
+
+    return match || null;
+  }
+
+
+  /* ==================================================
+     AUTH ERROR
+     ================================================== */
+
+  const authError =
+    document.getElementById('auth-error');
+
+
+  function showAuthError(msg){
+
+    authError.textContent = msg;
+
+    authError.classList.add('show');
+  }
+
+
+  function clearAuthError(){
+
+    authError.classList.remove('show');
+
+    authError.textContent = '';
+  }
+
+
+  /* ==================================================
+     AUTH TABS
+     ================================================== */
+
+  document
+    .querySelectorAll('.auth-tab')
+    .forEach(tab => {
+
+      tab.addEventListener(
+        'click',
+        () => {
+
+          playClickSound();
+
+          document
+            .querySelectorAll('.auth-tab')
+            .forEach(t =>
+              t.classList.remove('active')
+            );
+
+          document
+            .querySelectorAll('.auth-form')
+            .forEach(f =>
+              f.classList.remove('active')
+            );
+
+          tab.classList.add('active');
+
+          document
+            .getElementById(
+              tab.dataset.tab + '-form'
+            )
+            .classList.add('active');
+
+          clearAuthError();
+
+        }
+      );
+
+    });
+
+
+  /* ==================================================
+     REGISTRATIE FOTO
+     ================================================== */
+
+  const photoBtn =
+    document.getElementById(
+      'reg-photo-btn'
+    );
+
+  const photoInput =
+    document.getElementById(
+      'reg-photo-input'
+    );
+
+  const photoPreview =
+    document.getElementById(
+      'reg-photo-preview'
+    );
+
+
+  let regPhotoDataUrl = null;
+
+
+  photoBtn.addEventListener(
+    'click',
+    () => {
+
+      playClickSound(
+        560,
+        0.05,
+        0.08
+      );
+
+      photoInput.click();
+
+    }
+  );
+
+
+  photoInput.addEventListener(
+    'change',
+    () => {
+
+      const file =
+        photoInput.files[0];
+
+      if(!file) return;
+
+      const reader =
+        new FileReader();
+
+      reader.onload = e => {
+
+        regPhotoDataUrl =
+          e.target.result;
+
+        photoPreview.src =
+          regPhotoDataUrl;
+
+        photoPreview.style.display =
+          'block';
+
+      };
+
+      reader.readAsDataURL(file);
+
+    }
+  );
+
+
+  /* ==================================================
+     REGISTREREN
+     ================================================== */
+
+  document
+    .getElementById('register-form')
+    .addEventListener(
+      'submit',
+      async e => {
+
+        e.preventDefault();
+
+        clearAuthError();
+
+        playClickSound();
+
+
+        const firstname =
+          document
+            .getElementById('reg-firstname')
+            .value
+            .trim();
+
+
+        const lastname =
+          document
+            .getElementById('reg-lastname')
+            .value
+            .trim();
+
+
+        const email =
+          document
+            .getElementById('reg-email')
+            .value
+            .trim();
+
+
+        const birthdate =
+          document
+            .getElementById('reg-birthdate')
+            .value;
+
+
+        const clubRaw =
+          document
+            .getElementById('reg-club')
+            .value;
+
+
+        if(
+          !firstname ||
+          !lastname ||
+          !email ||
+          !birthdate ||
+          !clubRaw.trim()
+        ){
+
+          showAuthError(
+            'Vul alle verplichte velden in (voornaam, achternaam, e-mailadres, geboortedatum en club).'
+          );
+
+          return;
+        }
+
+
+        const emailPattern =
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if(!emailPattern.test(email)){
+
+          showAuthError(
+            'Vul een geldig e-mailadres in.'
+          );
+
+          return;
+        }
+
+
+        const club =
+          normalizeClub(clubRaw);
+
+
+        if(!club){
+
+          showAuthError(
+            `"${clubRaw}" is geen geldige club. Kies uit: ${VALID_CLUBS.join(', ')}.`
+          );
+
+          return;
+        }
+
+
+        if(
+          regPhotoDataUrl &&
+          regPhotoDataUrl.length >
+          MAX_PHOTO_CHARS
+        ){
+
+          showAuthError(
+            'Deze profielfoto is te groot. Kies een kleiner bestand.'
+          );
+
+          return;
+        }
+
+
+        const firstnameLower =
+          firstname.toLowerCase();
+
+
+        const lastnameLower =
+          lastname.toLowerCase();
+
+
+        const submitBtn =
+          e.target.querySelector(
+            '.auth-submit'
+          );
+
+
+        submitBtn.disabled = true;
+
+        submitBtn.textContent =
+          'Bezig...';
+
+
+        try{
+
+          const dupSnap =
+            await getDocs(
+              query(
+                accountsCol,
+
+                where(
+                  'firstnameLower',
+                  '==',
+                  firstnameLower
+                ),
+
+                where(
+                  'lastnameLower',
+                  '==',
+                  lastnameLower
+                )
+              )
+            );
+
+
+          if(!dupSnap.empty){
+
+            showAuthError(
+              'Er bestaat al een account met deze voor- en achternaam. Log in bij "Inloggen".'
+            );
+
+            return;
+          }
+
+
+          const newAccount = {
+
+            firstname,
+            lastname,
+
+            firstnameLower,
+            lastnameLower,
+
+            email,
+            birthdate,
+            club,
+
+            photo:
+              regPhotoDataUrl || null,
+
+            goals:0,
+            assists:0,
+            matchesPlayed:0,
+
+            createdAt:
+              serverTimestamp()
+
+          };
+
+
+          const docRef =
+            await addDoc(
+              accountsCol,
+              newAccount
+            );
+
+
+          sendWelcomeEmail(
+            newAccount
+          );
+
+
+          logIn(
+            newAccount,
+            true,
+            docRef.id
+          );
+
+
+        }catch(err){
+
+          console.error(err);
+
+          showAuthError(
+            'Kon geen verbinding maken met de database. Probeer het opnieuw.'
+          );
+
+        }finally{
+
+          submitBtn.disabled =
+            false;
+
+          submitBtn.textContent =
+            'Account aanmaken';
+
+        }
+
+      }
+    );
+
+
+  /* ==================================================
+     EMAILJS
+     ================================================== */
+
+  const EMAILJS_ENABLED = true;
+
+  const EMAILJS_SERVICE_ID =
+    'service_51k1pg7';
+
+  const EMAILJS_TEMPLATE_ID =
+    'template_pzrl2zf';
+
+  const EMAILJS_PUBLIC_KEY =
+    'GD8xYCR-ue3Re7Nbj';
+
+
+  function sendWelcomeEmail(account){
+
+    if(
+      !EMAILJS_ENABLED ||
+      typeof emailjs === 'undefined'
+    ){
 
       return;
     }
 
 
-    const newAccount={
-      firstname,
-      lastname,
-      firstnameLower,
-      lastnameLower,
-      email,
-      birthdate,
-      club,
-      photo:regPhotoDataUrl||null,
-      goals:0,
-      assists:0,
-      matchesPlayed:0,
-      createdAt:serverTimestamp()
-    };
+    emailjs.send(
 
+      EMAILJS_SERVICE_ID,
 
-    const docRef=await addDoc(
-      accountsCol,
-      newAccount
-    );
+      EMAILJS_TEMPLATE_ID,
 
-    sendWelcomeEmail(newAccount);
+      {
 
-    logIn(
-      newAccount,
-      true,
-      docRef.id
-    );
+        to_name:
+          `${account.firstname} ${account.lastname}`,
 
+        to_email:
+          account.email,
 
-  }catch(err){
+        club:
+          account.club
 
-    console.error(err);
+      },
 
-    showAuthError(
-      "Kon geen verbinding maken met de database. Probeer het opnieuw."
-    );
+      EMAILJS_PUBLIC_KEY
 
-  }finally{
-
-    submitBtn.disabled=false;
-    submitBtn.textContent="Account aanmaken";
-
-  }
-
-});
-
-
-/* ================= EMAILJS ================= */
-
-const EMAILJS_ENABLED=true;
-
-const EMAILJS_SERVICE_ID="service_51k1pg7";
-const EMAILJS_TEMPLATE_ID="template_pzrl2zf";
-const EMAILJS_PUBLIC_KEY="GD8xYCR-ue3Re7Nbj";
-
-
-function sendWelcomeEmail(account){
-
-  if(
-    !EMAILJS_ENABLED||
-    typeof emailjs==="undefined"
-  )return;
-
-  emailjs.send(
-    EMAILJS_SERVICE_ID,
-    EMAILJS_TEMPLATE_ID,
-    {
-      to_name:`${account.firstname} ${account.lastname}`,
-      to_email:account.email,
-      club:account.club
-    },
-    EMAILJS_PUBLIC_KEY
-  )
-  .catch(err=>
-    console.error(
-      "Welkomstmail versturen mislukt:",
-      err
     )
-  );
-
-}
-
-
-/* ================= LOGIN ================= */
-
-document
-.getElementById("login-form")
-.addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  clearAuthError();
-  playClickSound();
-
-  const firstname=
-    document.getElementById("login-firstname").value.trim();
-
-  const lastname=
-    document.getElementById("login-lastname").value.trim();
-
-
-  if(!firstname||!lastname){
-
-    showAuthError(
-      "Vul zowel je voornaam als achternaam in."
+    .catch(
+      err =>
+        console.error(
+          'Welkomstmail versturen mislukt:',
+          err
+        )
     );
 
-    return;
   }
 
 
-  const submitBtn=e.target.querySelector(".auth-submit");
+  /* ==================================================
+     INLOGGEN
+     ================================================== */
 
-  submitBtn.disabled=true;
-  submitBtn.textContent="Bezig...";
+  document
+    .getElementById('login-form')
+    .addEventListener(
+      'submit',
+      async e => {
+
+        e.preventDefault();
+
+        clearAuthError();
+
+        playClickSound();
 
 
-  try{
+        const firstname =
+          document
+            .getElementById(
+              'login-firstname'
+            )
+            .value
+            .trim();
 
-    const snap=await getDocs(
-      query(
-        accountsCol,
-        where(
-          "firstnameLower",
-          "==",
-          firstname.toLowerCase()
-        ),
-        where(
-          "lastnameLower",
-          "==",
-          lastname.toLowerCase()
-        )
-      )
+
+        const lastname =
+          document
+            .getElementById(
+              'login-lastname'
+            )
+            .value
+            .trim();
+
+
+        if(!firstname || !lastname){
+
+          showAuthError(
+            'Vul zowel je voornaam als achternaam in.'
+          );
+
+          return;
+        }
+
+
+        const submitBtn =
+          e.target.querySelector(
+            '.auth-submit'
+          );
+
+
+        submitBtn.disabled = true;
+
+        submitBtn.textContent =
+          'Bezig...';
+
+
+        try{
+
+          const snap =
+            await getDocs(
+              query(
+
+                accountsCol,
+
+                where(
+                  'firstnameLower',
+                  '==',
+                  firstname.toLowerCase()
+                ),
+
+                where(
+                  'lastnameLower',
+                  '==',
+                  lastname.toLowerCase()
+                )
+
+              )
+            );
+
+
+          if(snap.empty){
+
+            showAuthError(
+              'Geen account gevonden met deze naam. Maak eerst een nieuw account aan.'
+            );
+
+            return;
+          }
+
+
+          logIn(
+            snap.docs[0].data(),
+            true,
+            snap.docs[0].id
+          );
+
+
+        }catch(err){
+
+          console.error(err);
+
+          showAuthError(
+            'Kon geen verbinding maken met de database. Probeer het opnieuw.'
+          );
+
+        }finally{
+
+          submitBtn.disabled =
+            false;
+
+          submitBtn.textContent =
+            'Inloggen';
+
+        }
+
+      }
     );
 
 
-    if(snap.empty){
+  /* ==================================================
+     LOGIN AFRONDEN
+     ================================================== */
 
-      showAuthError(
-        "Geen account gevonden met deze naam. Maak eerst een nieuw account aan."
-      );
+  const SESSION_KEY =
+    'voetbalSession';
 
-      return;
+
+  let currentAccountId = null;
+
+
+  function renderAvatarInto(
+    imgEl,
+    fallbackEl,
+    account
+  ){
+
+    if(account.photo){
+
+      imgEl.src =
+        account.photo;
+
+      imgEl.style.display =
+        'block';
+
+      fallbackEl.style.display =
+        'none';
+
+    }else{
+
+      fallbackEl.textContent =
+        (
+          (account.firstname?.[0] || '') +
+          (account.lastname?.[0] || '')
+        ).toUpperCase();
+
+
+      fallbackEl.style.display =
+        'flex';
+
+      imgEl.style.display =
+        'none';
+
+    }
+
+  }
+
+
+  function logIn(
+    account,
+    remember = true,
+    id = null
+  ){
+
+    if(id){
+      currentAccountId = id;
     }
 
 
-    logIn(
-      snap.docs[0].data(),
-      true,
-      snap.docs[0].id
+    document
+      .getElementById(
+        'user-name-label'
+      )
+      .textContent =
+      `${account.firstname} ${account.lastname}`;
+
+
+    document
+      .getElementById(
+        'user-club-label'
+      )
+      .textContent =
+      account.club;
+
+
+    renderAvatarInto(
+
+      document.getElementById(
+        'user-avatar-img'
+      ),
+
+      document.getElementById(
+        'user-avatar-fallback'
+      ),
+
+      account
+
     );
 
 
-  }catch(err){
+    if(remember){
 
-    console.error(err);
+      try{
 
-    showAuthError(
-      "Kon geen verbinding maken met de database. Probeer het opnieuw."
+        localStorage.setItem(
+
+          SESSION_KEY,
+
+          JSON.stringify({
+
+            firstname:
+              account.firstname,
+
+            lastname:
+              account.lastname,
+
+            birthdate:
+              account.birthdate,
+
+            club:
+              account.club,
+
+            photo:
+              account.photo || null,
+
+            id:
+              currentAccountId
+
+          })
+
+        );
+
+      }catch(err){
+
+        console.warn(
+          'Kon sessie niet lokaal opslaan.',
+          err
+        );
+
+      }
+
+    }
+
+
+    document
+      .getElementById(
+        'auth-screen'
+      )
+      .style.display =
+      'none';
+
+
+    const appContent =
+      document.getElementById(
+        'app-content'
+      );
+
+
+    appContent.style.display =
+      'block';
+
+
+    appContent.classList.remove(
+      'entering'
     );
 
-  }finally{
 
-    submitBtn.disabled=false;
-    submitBtn.textContent="Inloggen";
-
-  }
-
-});
+    void appContent.offsetWidth;
 
 
-/* ================= LOGIN ================= */
-
-const SESSION_KEY="voetbalSession";
-
-let currentAccountId=null;
-
-
-function renderAvatarInto(
-  imgEl,
-  fallbackEl,
-  account
-){
-
-  if(account.photo){
-
-    imgEl.src=account.photo;
-    imgEl.style.display="block";
-    fallbackEl.style.display="none";
-
-  }else{
-
-    fallbackEl.textContent=
-      (
-        (account.firstname?.[0]||"")+
-        (account.lastname?.[0]||"")
-      ).toUpperCase();
-
-    fallbackEl.style.display="flex";
-    imgEl.style.display="none";
+    appContent.classList.add(
+      'entering'
+    );
 
   }
 
-}
+
+  async function resolveAccountDoc(
+    firstname,
+    lastname
+  ){
+
+    const snap =
+      await getDocs(
+        query(
+
+          accountsCol,
+
+          where(
+            'firstnameLower',
+            '==',
+            firstname.toLowerCase()
+          ),
+
+          where(
+            'lastnameLower',
+            '==',
+            lastname.toLowerCase()
+          )
+
+        )
+      );
 
 
-function logIn(
-  account,
-  remember=true,
-  id=null
-){
+    return snap.empty
+      ? null
+      : snap.docs[0];
 
-  if(id)currentAccountId=id;
-
-  document.getElementById(
-    "user-name-label"
-  ).textContent=
-    `${account.firstname} ${account.lastname}`;
-
-  document.getElementById(
-    "user-club-label"
-  ).textContent=account.club;
+  }
 
 
-  renderAvatarInto(
-    document.getElementById("user-avatar-img"),
-    document.getElementById("user-avatar-fallback"),
-    account
-  );
+  /* ==================================================
+     AUTOMATISCH INLOGGEN
+     ================================================== */
 
-
-  if(remember){
+  (async function tryAutoLogin(){
 
     try{
 
-      localStorage.setItem(
-        SESSION_KEY,
-        JSON.stringify({
-          firstname:account.firstname,
-          lastname:account.lastname,
-          birthdate:account.birthdate,
-          club:account.club,
-          photo:account.photo||null,
-          id:currentAccountId
-        })
-      );
+      const saved =
+        JSON.parse(
+          localStorage.getItem(
+            SESSION_KEY
+          ) || 'null'
+        );
+
+
+      if(
+        saved &&
+        saved.firstname &&
+        saved.lastname &&
+        saved.club
+      ){
+
+        logIn(
+          saved,
+          false,
+          saved.id || null
+        );
+
+
+        const docSnap =
+          await resolveAccountDoc(
+            saved.firstname,
+            saved.lastname
+          );
+
+
+        if(docSnap){
+
+          logIn(
+            docSnap.data(),
+            true,
+            docSnap.id
+          );
+
+        }
+
+      }
 
     }catch(err){
 
       console.warn(
-        "Kon sessie niet lokaal opslaan.",
+        'Kon vorige sessie niet herstellen.',
         err
       );
 
     }
 
-  }
+  })();
 
 
-  document.getElementById(
-    "auth-screen"
-  ).style.display="none";
+  /* ==================================================
+     UITLOGGEN
+     ================================================== */
+
+  document
+    .getElementById('logout-btn')
+    .addEventListener(
+      'click',
+      () => {
+
+        playClickSound(
+          420,
+          0.07,
+          0.09
+        );
 
 
-  const appContent=
-    document.getElementById("app-content");
+        try{
 
-  appContent.style.display="block";
+          localStorage.removeItem(
+            SESSION_KEY
+          );
 
-  appContent.classList.remove("entering");
-
-  void appContent.offsetWidth;
-
-  appContent.classList.add("entering");
-
-}
+        }catch(err){}
 
 
-/* ================= RESOLVE ACCOUNT ================= */
-
-async function resolveAccountDoc(
-  firstname,
-  lastname
-){
-
-  const snap=await getDocs(
-    query(
-      accountsCol,
-      where(
-        "firstnameLower",
-        "==",
-        firstname.toLowerCase()
-      ),
-      where(
-        "lastnameLower",
-        "==",
-        lastname.toLowerCase()
-      )
-    )
-  );
-
-  return snap.empty?null:snap.docs[0];
-}
+        currentAccountId = null;
 
 
-/* ================= AUTO LOGIN ================= */
+        document
+          .getElementById(
+            'app-content'
+          )
+          .style.display =
+          'none';
 
-(async function tryAutoLogin(){
 
-  try{
+        document
+          .getElementById(
+            'auth-screen'
+          )
+          .style.display =
+          'flex';
 
-    const saved=JSON.parse(
-      localStorage.getItem(SESSION_KEY)||"null"
+
+        document
+          .getElementById(
+            'login-form'
+          )
+          .reset();
+
+
+        clearAuthError();
+
+      }
     );
 
 
-    if(
-      saved&&
-      saved.firstname&&
-      saved.lastname&&
-      saved.club
-    ){
+  /* ==================================================
+     LEDENLIJST
+     ================================================== */
 
-      logIn(
-        saved,
-        false,
-        saved.id||null
+  const ledenList =
+    document.getElementById(
+      'leden-list'
+    );
+
+
+  const accountsCache = {};
+
+
+  onSnapshot(
+
+    query(
+      accountsCol,
+      orderBy(
+        'createdAt',
+        'asc'
+      )
+    ),
+
+    snapshot => {
+
+      if(snapshot.empty){
+
+        ledenList.innerHTML =
+          '<div class="auth-hint">Nog geen leden geregistreerd.</div>';
+
+        return;
+      }
+
+
+      ledenList.innerHTML = '';
+
+
+      snapshot.forEach(
+        docSnap => {
+
+          const a =
+            docSnap.data();
+
+
+          accountsCache[
+            docSnap.id
+          ] = a;
+
+
+          /*
+             IEDER LID KRIJGT HIER
+             EEN EIGEN RECTANGLE KAART.
+          */
+
+          const row =
+            document.createElement(
+              'div'
+            );
+
+
+          row.className =
+            'member-card';
+
+
+          row.dataset.id =
+            docSnap.id;
+
+
+          const initials =
+            (
+              (a.firstname?.[0] || '') +
+              (a.lastname?.[0] || '')
+            ).toUpperCase();
+
+
+          row.innerHTML = `
+
+            ${
+              a.photo
+
+              ?
+
+              `
+                <img
+                  class="member-avatar"
+                  src="${a.photo}"
+                  alt=""
+                >
+              `
+
+              :
+
+              `
+                <div
+                  class="member-avatar-fallback"
+                >
+                  ${initials}
+                </div>
+              `
+            }
+
+
+            <div class="member-info">
+
+              <div class="member-name">
+                ${a.firstname} ${a.lastname}
+              </div>
+
+              <div class="member-club">
+                ${a.club}
+              </div>
+
+            </div>
+
+          `;
+
+
+          ledenList.appendChild(
+            row
+          );
+
+        }
+      );
+
+    },
+
+    err => {
+
+      console.error(err);
+
+      ledenList.innerHTML =
+        '<div class="auth-hint">Kon ledenlijst niet laden.</div>';
+
+    }
+
+  );
+
+
+  /* ==================================================
+     KLIK OP LID
+     ================================================== */
+
+  ledenList.addEventListener(
+    'click',
+    e => {
+
+      const row =
+        e.target.closest(
+          '.member-card'
+        );
+
+
+      if(!row) return;
+
+
+      playClickSound(
+        520,
+        0.05,
+        0.07
       );
 
 
-      const docSnap=
-        await resolveAccountDoc(
-          saved.firstname,
-          saved.lastname
+      openProfile(
+        row.dataset.id
+      );
+
+    }
+  );
+
+
+  /* ==================================================
+     PROFIEL MODAL
+     ================================================== */
+
+  const profileModal =
+    document.getElementById(
+      'profile-modal'
+    );
+
+
+  const profileView =
+    document.getElementById(
+      'profile-view'
+    );
+
+
+  const profileEditForm =
+    document.getElementById(
+      'profile-edit-form'
+    );
+
+
+  const profileEditError =
+    document.getElementById(
+      'profile-edit-error'
+    );
+
+
+  let currentProfileId = null;
+
+
+  function showProfileViewMode(){
+
+    profileView.style.display =
+      'block';
+
+    profileEditForm.style.display =
+      'none';
+
+    profileEditError.classList.remove(
+      'show'
+    );
+
+    profileEditError.textContent =
+      '';
+
+  }
+
+
+  function openProfile(id){
+
+    const a =
+      accountsCache[id];
+
+
+    if(!a) return;
+
+
+    currentProfileId =
+      id;
+
+
+    document
+      .getElementById(
+        'profile-view-name'
+      )
+      .textContent =
+      `${a.firstname} ${a.lastname}`;
+
+
+    document
+      .getElementById(
+        'profile-view-club'
+      )
+      .textContent =
+      a.club;
+
+
+    document
+      .getElementById(
+        'profile-view-goals'
+      )
+      .textContent =
+      a.goals || 0;
+
+
+    document
+      .getElementById(
+        'profile-view-assists'
+      )
+      .textContent =
+      a.assists || 0;
+
+
+    document
+      .getElementById(
+        'profile-view-matches'
+      )
+      .textContent =
+      a.matchesPlayed || 0;
+
+
+    renderAvatarInto(
+
+      document.getElementById(
+        'profile-view-photo'
+      ),
+
+      document.getElementById(
+        'profile-view-fallback'
+      ),
+
+      a
+
+    );
+
+
+    const isOwn =
+      id === currentAccountId;
+
+
+    document
+      .getElementById(
+        'profile-edit-btn'
+      )
+      .style.display =
+      isOwn
+        ? 'block'
+        : 'none';
+
+
+    showProfileViewMode();
+
+
+    profileModal.classList.add(
+      'open'
+    );
+
+  }
+
+
+  function closeProfileModal(){
+
+    profileModal.classList.remove(
+      'open'
+    );
+
+    currentProfileId =
+      null;
+
+  }
+
+
+  document
+    .getElementById(
+      'profile-close-btn'
+    )
+    .addEventListener(
+      'click',
+      () => {
+
+        playClickSound(
+          420,
+          0.05,
+          0.08
+        );
+
+        closeProfileModal();
+
+      }
+    );
+
+
+  profileModal.addEventListener(
+    'click',
+    e => {
+
+      if(
+        e.target === profileModal
+      ){
+
+        closeProfileModal();
+
+      }
+
+    }
+  );
+
+
+  /* ==================================================
+     PROFIEL BEWERKEN
+     ================================================== */
+
+  let editPhotoDataUrl = null;
+
+
+  document
+    .getElementById(
+      'profile-edit-btn'
+    )
+    .addEventListener(
+      'click',
+      () => {
+
+        playClickSound();
+
+
+        const a =
+          accountsCache[
+            currentProfileId
+          ];
+
+
+        if(!a) return;
+
+
+        document
+          .getElementById(
+            'edit-firstname'
+          )
+          .value =
+          a.firstname || '';
+
+
+        document
+          .getElementById(
+            'edit-lastname'
+          )
+          .value =
+          a.lastname || '';
+
+
+        document
+          .getElementById(
+            'edit-club'
+          )
+          .value =
+          a.club || '';
+
+
+        editPhotoDataUrl =
+          null;
+
+
+        const editPreview =
+          document.getElementById(
+            'edit-photo-preview'
+          );
+
+
+        if(a.photo){
+
+          editPreview.src =
+            a.photo;
+
+          editPreview.style.display =
+            'block';
+
+        }else{
+
+          editPreview.style.display =
+            'none';
+
+        }
+
+
+        profileView.style.display =
+          'none';
+
+
+        profileEditForm.style.display =
+          'flex';
+
+      }
+    );
+
+
+  const editPhotoBtn =
+    document.getElementById(
+      'edit-photo-btn'
+    );
+
+
+  const editPhotoInput =
+    document.getElementById(
+      'edit-photo-input'
+    );
+
+
+  editPhotoBtn.addEventListener(
+    'click',
+    () => {
+
+      playClickSound(
+        560,
+        0.05,
+        0.08
+      );
+
+      editPhotoInput.click();
+
+    }
+  );
+
+
+  editPhotoInput.addEventListener(
+    'change',
+    () => {
+
+      const file =
+        editPhotoInput.files[0];
+
+
+      if(!file) return;
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload = e => {
+
+        editPhotoDataUrl =
+          e.target.result;
+
+
+        const editPreview =
+          document.getElementById(
+            'edit-photo-preview'
+          );
+
+
+        editPreview.src =
+          editPhotoDataUrl;
+
+
+        editPreview.style.display =
+          'block';
+
+      };
+
+
+      reader.readAsDataURL(file);
+
+    }
+  );
+
+
+  /* ==================================================
+     PROFIEL OPSLAAN
+     ================================================== */
+
+  profileEditForm.addEventListener(
+    'submit',
+    async e => {
+
+      e.preventDefault();
+
+      playClickSound();
+
+
+      profileEditError.classList.remove(
+        'show'
+      );
+
+      profileEditError.textContent =
+        '';
+
+
+      const firstname =
+        document
+          .getElementById(
+            'edit-firstname'
+          )
+          .value
+          .trim();
+
+
+      const lastname =
+        document
+          .getElementById(
+            'edit-lastname'
+          )
+          .value
+          .trim();
+
+
+      const clubRaw =
+        document
+          .getElementById(
+            'edit-club'
+          )
+          .value;
+
+
+      if(
+        !firstname ||
+        !lastname ||
+        !clubRaw.trim()
+      ){
+
+        profileEditError.textContent =
+          'Vul voornaam, achternaam en club in.';
+
+        profileEditError.classList.add(
+          'show'
+        );
+
+        return;
+      }
+
+
+      const club =
+        normalizeClub(clubRaw);
+
+
+      if(!club){
+
+        profileEditError.textContent =
+          `"${clubRaw}" is geen geldige club. Kies uit: ${VALID_CLUBS.join(', ')}.`;
+
+        profileEditError.classList.add(
+          'show'
+        );
+
+        return;
+      }
+
+
+      if(
+        editPhotoDataUrl &&
+        editPhotoDataUrl.length >
+        MAX_PHOTO_CHARS
+      ){
+
+        profileEditError.textContent =
+          'Deze profielfoto is te groot. Kies een kleiner bestand.';
+
+        profileEditError.classList.add(
+          'show'
+        );
+
+        return;
+      }
+
+
+      const submitBtn =
+        profileEditForm.querySelector(
+          '.auth-submit'
         );
 
 
-      if(docSnap){
+      submitBtn.disabled =
+        true;
 
-        logIn(
-          docSnap.data(),
-          true,
-          docSnap.id
+      submitBtn.textContent =
+        'Bezig...';
+
+
+      const updates = {
+
+        firstname,
+        lastname,
+
+        firstnameLower:
+          firstname.toLowerCase(),
+
+        lastnameLower:
+          lastname.toLowerCase(),
+
+        club
+
+      };
+
+
+      if(editPhotoDataUrl){
+
+        updates.photo =
+          editPhotoDataUrl;
+
+      }
+
+
+      try{
+
+        await updateDoc(
+
+          doc(
+            db,
+            'accounts',
+            currentProfileId
+          ),
+
+          updates
+
         );
+
+
+        const merged = {
+
+          ...accountsCache[
+            currentProfileId
+          ],
+
+          ...updates
+
+        };
+
+
+        accountsCache[
+          currentProfileId
+        ] = merged;
+
+
+        if(
+          currentProfileId ===
+          currentAccountId
+        ){
+
+          logIn(
+            merged,
+            true,
+            currentAccountId
+          );
+
+        }
+
+
+        closeProfileModal();
+
+
+      }catch(err){
+
+        console.error(err);
+
+        profileEditError.textContent =
+          'Opslaan mislukt. Probeer het opnieuw.';
+
+        profileEditError.classList.add(
+          'show'
+        );
+
+      }finally{
+
+        submitBtn.disabled =
+          false;
+
+        submitBtn.textContent =
+          'Opslaan';
+
+      }
+
+    }
+  );
+
+</script>
+
+
+<script>
+
+  /* ==================================================
+     DATA
+     ================================================== */
+
+  const teams = [
+
+    {
+      name:"TOGB",
+      code:"TO",
+      color:"#F4C430",
+      w:0,
+      d:0,
+      l:0,
+      gf:0,
+      ga:0
+    },
+
+    {
+      name:"SoccerBoys",
+      code:"SB",
+      color:"#4EA35C",
+      w:0,
+      d:0,
+      l:0,
+      gf:0,
+      ga:0
+    },
+
+    {
+      name:"CVV",
+      code:"CV",
+      color:"#D14E4E",
+      w:0,
+      d:0,
+      l:0,
+      gf:0,
+      ga:0
+    },
+
+    {
+      name:"BVCB",
+      code:"BV",
+      color:"#4FA3E0",
+      w:0,
+      d:0,
+      l:0,
+      gf:0,
+      ga:0
+    }
+
+  ]
+  .map(
+    t => ({
+      ...t,
+
+      pts:
+        t.w * 3 +
+        t.d,
+
+      gd:
+        t.gf -
+        t.ga
+    })
+  )
+  .sort(
+    (a,b) =>
+      b.pts - a.pts ||
+      b.gd - a.gd ||
+      b.gf - a.gf
+  );
+
+
+  const results = [
+
+    {
+      home:"TOGB",
+      away:"CVV",
+      hs:0,
+      as:0
+    },
+
+    {
+      home:"BVCB",
+      away:"SoccerBoys",
+      hs:0,
+      as:0
+    },
+
+    {
+      home:"CVV",
+      away:"BVCB",
+      hs:0,
+      as:0
+    },
+
+    {
+      home:"SoccerBoys",
+      away:"TOGB",
+      hs:0,
+      as:0
+    }
+
+  ];
+
+
+  const upcoming = [
+
+    {
+      day:"Nog Geen Bevestiging · (tijd)",
+      home:"TOGB",
+      away:"CVV"
+    },
+
+    {
+      day:"Nog Geen Bevestiging · (tijd)",
+      home:"BCVB",
+      away:"SoccerBoys"
+    },
+
+    {
+      day:"Nog Geen Bevestiging · (tijd)",
+      home:"CVV",
+      away:"BVCB"
+    },
+
+    {
+      day:"Nog Geen Bevestiging · (tijd)",
+      home:"SoccerBoys",
+      away:"TOGB"
+    }
+
+  ];
+
+
+  const scorers = [
+
+    {
+      name:"leeg",
+      team:"TOGB",
+      goals:0
+    },
+
+    {
+      name:"leeg",
+      team:"SoccerBoys",
+      goals:0
+    },
+
+    {
+      name:"leeg",
+      team:"BVCB",
+      goals:0
+    },
+
+    {
+      name:"leeg",
+      team:"CVV",
+      goals:0
+    },
+
+    {
+      name:"leeg",
+      team:"TOGB",
+      goals:0
+    }
+
+  ];
+
+
+  const teamColor =
+    name =>
+      (
+        teams.find(
+          t => t.name === name
+        ) || {}
+      ).color || "#888";
+
+
+  const teamCode =
+    name =>
+      (
+        teams.find(
+          t => t.name === name
+        ) || {}
+      ).code || "???";
+
+
+  /* ==================================================
+     QUICK STATS
+     ================================================== */
+
+  const gamesPlayed =
+    teams.reduce(
+      (sum,t) =>
+        sum +
+        t.w +
+        t.d +
+        t.l,
+      0
+    ) / 2;
+
+
+  const totalGoals =
+    teams.reduce(
+      (sum,t) =>
+        sum + t.gf,
+      0
+    );
+
+
+  const avgGoals =
+    gamesPlayed
+      ? (totalGoals / gamesPlayed).toFixed(1)
+      : "0.0";
+
+
+  document
+    .getElementById(
+      'stats-strip'
+    )
+    .innerHTML = `
+
+      <div class="stat-cell">
+
+        <div
+          class="stat-value"
+          data-target="${gamesPlayed}"
+          id="stat-games"
+        >
+          0
+        </div>
+
+        <div class="stat-label">
+          Wedstrijden
+        </div>
+
+      </div>
+
+
+      <div class="stat-cell">
+
+        <div
+          class="stat-value"
+          data-target="${totalGoals}"
+          id="stat-goals"
+        >
+          0
+        </div>
+
+        <div class="stat-label">
+          Goals totaal
+        </div>
+
+      </div>
+
+
+      <div class="stat-cell">
+
+        <div
+          class="stat-value"
+          id="stat-avg"
+        >
+          0.0
+        </div>
+
+        <div class="stat-label">
+          Gem. per duel
+        </div>
+
+      </div>
+
+    `;
+
+
+  function countUp(
+    el,
+    target,
+    decimals = 0,
+    duration = 700
+  ){
+
+    const start =
+      performance.now();
+
+
+    function tick(now){
+
+      const progress =
+        Math.min(
+          (now - start) /
+          duration,
+          1
+        );
+
+
+      const eased =
+        1 -
+        Math.pow(
+          1 - progress,
+          3
+        );
+
+
+      const value =
+        target * eased;
+
+
+      el.textContent =
+        decimals
+          ? value.toFixed(decimals)
+          : Math.round(value);
+
+
+      if(progress < 1){
+
+        requestAnimationFrame(
+          tick
+        );
+
+      }else{
+
+        el.textContent =
+          decimals
+            ? target.toFixed(decimals)
+            : target;
 
       }
 
     }
 
-  }catch(err){
 
-    console.warn(
-      "Kon vorige sessie niet herstellen.",
-      err
+    requestAnimationFrame(
+      tick
     );
 
   }
 
-})();
+
+  countUp(
+    document.getElementById(
+      'stat-games'
+    ),
+    gamesPlayed,
+    0
+  );
 
 
-/* ================= LOGOUT ================= */
-
-document
-.getElementById("logout-btn")
-.addEventListener("click",()=>{
-
-  playClickSound(420,.07,.09);
-
-  try{
-    localStorage.removeItem(SESSION_KEY);
-  }catch(err){}
-
-  currentAccountId=null;
-
-  document.getElementById(
-    "app-content"
-  ).style.display="none";
-
-  document.getElementById(
-    "auth-screen"
-  ).style.display="flex";
-
-  document.getElementById(
-    "login-form"
-  ).reset();
-
-  clearAuthError();
-
-});
+  countUp(
+    document.getElementById(
+      'stat-goals'
+    ),
+    totalGoals,
+    0
+  );
 
 
-/* ================= LEDEN ================= */
-
-const ledenList=
-  document.getElementById("leden-list");
-
-const accountsCache={};
-
-
-onSnapshot(
-  query(
-    accountsCol,
-    orderBy("createdAt","asc")
-  ),
-
-  snapshot=>{
-
-    if(snapshot.empty){
-
-      ledenList.innerHTML=
-        '<div class="auth-hint">Nog geen leden geregistreerd.</div>';
-
-      return;
-    }
+  countUp(
+    document.getElementById(
+      'stat-avg'
+    ),
+    parseFloat(avgGoals),
+    1
+  );
 
 
-    ledenList.innerHTML="";
+  /* ==================================================
+     STANDINGS
+     ================================================== */
+
+  const standingsBody =
+    document.getElementById(
+      'standings-body'
+    );
 
 
-    snapshot.forEach(docSnap=>{
+  teams.forEach(
+    (t,i) => {
 
-      const a=docSnap.data();
-
-      accountsCache[docSnap.id]=a;
-
-
-      const row=
-        document.createElement("div");
-
-      row.className=
-        "scorer-row clickable";
-
-      row.dataset.id=
-        docSnap.id;
+      const pos =
+        i + 1;
 
 
-      const initials=
-        (
-          (a.firstname?.[0]||"")+
-          (a.lastname?.[0]||"")
-        ).toUpperCase();
+      const tr =
+        document.createElement(
+          'tr'
+        );
 
 
-      row.innerHTML=`
+      if(pos <= 1){
 
-        ${
-          a.photo
-          ?
-          `<img
-            class="user-avatar"
-            style="width:32px;height:32px;"
-            src="${a.photo}"
-          >`
-          :
-          `<div
-            class="user-avatar-fallback"
-            style="width:32px;height:32px;"
+        tr.classList.add(
+          'zone-cup'
+        );
+
+      }
+
+
+      if(pos >= 4){
+
+        tr.classList.add(
+          'zone-drop'
+        );
+
+      }
+
+
+      tr.innerHTML = `
+
+        <td>
+          <span class="pos">
+            ${pos}
+          </span>
+        </td>
+
+
+        <td class="team-col">
+
+          <span
+            class="crest"
+            style="background:${t.color}"
           >
-            ${initials}
-          </div>`
-        }
+            ${t.code.slice(0,2)}
+          </span>
 
-        <span class="scorer-info">
+          ${t.name}
 
-          <div class="scorer-name">
-            ${a.firstname} ${a.lastname}
-          </div>
+        </td>
 
-          <div class="scorer-team">
-            ${a.club}
-          </div>
 
+        <td>
+          ${t.w}
+        </td>
+
+        <td>
+          ${t.d}
+        </td>
+
+        <td>
+          ${t.l}
+        </td>
+
+        <td>
+          ${
+            t.gd > 0
+              ? '+' + t.gd
+              : t.gd
+          }
+        </td>
+
+        <td class="pts">
+          ${t.pts}
+        </td>
+
+      `;
+
+
+      standingsBody.appendChild(
+        tr
+      );
+
+    }
+  );
+
+
+  /* ==================================================
+     RESULTS
+     ================================================== */
+
+  const resultsList =
+    document.getElementById(
+      'results-list'
+    );
+
+
+  results.forEach(
+    r => {
+
+      const div =
+        document.createElement(
+          'div'
+        );
+
+
+      div.className =
+        'fixture';
+
+
+      div.innerHTML = `
+
+        <span class="home">
+          ${r.home}
+        </span>
+
+        <span class="score">
+          ${r.hs} – ${r.as}
+        </span>
+
+        <span class="away">
+          ${r.away}
         </span>
 
       `;
 
 
-      ledenList.appendChild(row);
+      resultsList.appendChild(
+        div
+      );
 
-    });
-
-  },
-
-  err=>{
-
-    console.error(err);
-
-    ledenList.innerHTML=
-      '<div class="auth-hint">Kon ledenlijst niet laden.</div>';
-
-  }
-
-);
-
-
-ledenList.addEventListener(
-  "click",
-  e=>{
-
-    const row=
-      e.target.closest(".scorer-row");
-
-    if(!row)return;
-
-    playClickSound(520,.05,.07);
-
-    openProfile(row.dataset.id);
-
-  }
-);
-
-
-/* ================= PROFILE ================= */
-
-const profileModal=
-  document.getElementById("profile-modal");
-
-const profileView=
-  document.getElementById("profile-view");
-
-const profileEditForm=
-  document.getElementById("profile-edit-form");
-
-const profileEditError=
-  document.getElementById("profile-edit-error");
-
-let currentProfileId=null;
-
-
-function showProfileViewMode(){
-
-  profileView.style.display="block";
-
-  profileEditForm.style.display="none";
-
-  profileEditError.classList.remove("show");
-
-  profileEditError.textContent="";
-
-}
-
-
-function openProfile(id){
-
-  const a=accountsCache[id];
-
-  if(!a)return;
-
-  currentProfileId=id;
-
-
-  document.getElementById(
-    "profile-view-name"
-  ).textContent=
-    `${a.firstname} ${a.lastname}`;
-
-
-  document.getElementById(
-    "profile-view-club"
-  ).textContent=a.club;
-
-
-  document.getElementById(
-    "profile-view-goals"
-  ).textContent=a.goals||0;
-
-
-  document.getElementById(
-    "profile-view-assists"
-  ).textContent=a.assists||0;
-
-
-  document.getElementById(
-    "profile-view-matches"
-  ).textContent=a.matchesPlayed||0;
-
-
-  renderAvatarInto(
-    document.getElementById("profile-view-photo"),
-    document.getElementById("profile-view-fallback"),
-    a
+    }
   );
 
 
-  const isOwn=
-    id===currentAccountId;
+  /* ==================================================
+     UPCOMING
+     ================================================== */
 
-
-  document.getElementById(
-    "profile-edit-btn"
-  ).style.display=
-    isOwn?"block":"none";
-
-
-  showProfileViewMode();
-
-  profileModal.classList.add("open");
-
-}
-
-
-function closeProfileModal(){
-
-  profileModal.classList.remove("open");
-
-  currentProfileId=null;
-
-}
-
-
-document
-.getElementById("profile-close-btn")
-.addEventListener("click",()=>{
-
-  playClickSound(420,.05,.08);
-
-  closeProfileModal();
-
-});
-
-
-profileModal.addEventListener(
-  "click",
-  e=>{
-
-    if(e.target===profileModal)
-      closeProfileModal();
-
-  }
-);
-
-
-/* ================= EDIT PROFILE ================= */
-
-let editPhotoDataUrl=null;
-
-
-document
-.getElementById("profile-edit-btn")
-.addEventListener("click",()=>{
-
-  playClickSound();
-
-  const a=
-    accountsCache[currentProfileId];
-
-  if(!a)return;
-
-
-  document.getElementById(
-    "edit-firstname"
-  ).value=a.firstname||"";
-
-
-  document.getElementById(
-    "edit-lastname"
-  ).value=a.lastname||"";
-
-
-  document.getElementById(
-    "edit-club"
-  ).value=a.club||"";
-
-
-  editPhotoDataUrl=null;
-
-
-  const editPreview=
+  const upcomingList =
     document.getElementById(
-      "edit-photo-preview"
+      'upcoming-list'
     );
 
 
-  if(a.photo){
-
-    editPreview.src=a.photo;
-    editPreview.style.display="block";
-
-  }else{
-
-    editPreview.style.display="none";
-
-  }
+  let lastDay = "";
 
 
-  profileView.style.display="none";
+  upcoming.forEach(
+    u => {
 
-  profileEditForm.style.display="flex";
+      if(u.day !== lastDay){
 
-});
-
-
-/* ================= EDIT PHOTO ================= */
-
-const editPhotoBtn=
-  document.getElementById("edit-photo-btn");
-
-const editPhotoInput=
-  document.getElementById("edit-photo-input");
+        const dayLabel =
+          document.createElement(
+            'div'
+          );
 
 
-editPhotoBtn.addEventListener(
-  "click",
-  ()=>{
-
-    playClickSound(560,.05,.08);
-
-    editPhotoInput.click();
-
-  }
-);
+        dayLabel.className =
+          'fixture-day';
 
 
-editPhotoInput.addEventListener(
-  "change",
-  ()=>{
+        dayLabel.textContent =
+          u.day;
 
-    const file=editPhotoInput.files[0];
 
-    if(!file)return;
-
-    const reader=new FileReader();
-
-    reader.onload=e=>{
-
-      editPhotoDataUrl=e.target.result;
-
-      const editPreview=
-        document.getElementById(
-          "edit-photo-preview"
+        upcomingList.appendChild(
+          dayLabel
         );
 
-      editPreview.src=editPhotoDataUrl;
 
-      editPreview.style.display="block";
-
-    };
-
-    reader.readAsDataURL(file);
-
-  }
-);
-
-
-/* ================= SAVE PROFILE ================= */
-
-profileEditForm.addEventListener(
-  "submit",
-  async e=>{
-
-    e.preventDefault();
-
-    playClickSound();
-
-    profileEditError.classList.remove("show");
-    profileEditError.textContent="";
-
-
-    const firstname=
-      document.getElementById(
-        "edit-firstname"
-      ).value.trim();
-
-
-    const lastname=
-      document.getElementById(
-        "edit-lastname"
-      ).value.trim();
-
-
-    const clubRaw=
-      document.getElementById(
-        "edit-club"
-      ).value;
-
-
-    if(!firstname||!lastname||!clubRaw.trim()){
-
-      profileEditError.textContent=
-        "Vul voornaam, achternaam en club in.";
-
-      profileEditError.classList.add("show");
-
-      return;
-
-    }
-
-
-    const club=normalizeClub(clubRaw);
-
-
-    if(!club){
-
-      profileEditError.textContent=
-        `"${clubRaw}" is geen geldige club. Kies uit: ${VALID_CLUBS.join(", ")}.`;
-
-      profileEditError.classList.add("show");
-
-      return;
-
-    }
-
-
-    if(
-      editPhotoDataUrl &&
-      editPhotoDataUrl.length>MAX_PHOTO_CHARS
-    ){
-
-      profileEditError.textContent=
-        "Deze profielfoto is te groot. Kies een kleiner bestand.";
-
-      profileEditError.classList.add("show");
-
-      return;
-
-    }
-
-
-    const submitBtn=
-      profileEditForm.querySelector(
-        ".auth-submit"
-      );
-
-
-    submitBtn.disabled=true;
-    submitBtn.textContent="Bezig...";
-
-
-    const updates={
-      firstname,
-      lastname,
-      firstnameLower:firstname.toLowerCase(),
-      lastnameLower:lastname.toLowerCase(),
-      club
-    };
-
-
-    if(editPhotoDataUrl)
-      updates.photo=editPhotoDataUrl;
-
-
-    try{
-
-      await updateDoc(
-        doc(
-          db,
-          "accounts",
-          currentProfileId
-        ),
-        updates
-      );
-
-
-      const merged={
-        ...accountsCache[currentProfileId],
-        ...updates
-      };
-
-
-      accountsCache[currentProfileId]=merged;
-
-
-      if(currentProfileId===currentAccountId){
-
-        logIn(
-          merged,
-          true,
-          currentAccountId
-        );
+        lastDay =
+          u.day;
 
       }
 
 
-      closeProfileModal();
-
-
-    }catch(err){
-
-      console.error(err);
-
-      profileEditError.textContent=
-        "Opslaan mislukt. Probeer het opnieuw.";
-
-      profileEditError.classList.add("show");
-
-    }finally{
-
-      submitBtn.disabled=false;
-      submitBtn.textContent="Opslaan";
-
-    }
-
-  }
-);
-
-</script>
-
-
-<!-- ================= DATA / APP ================= -->
-
-<script>
-
-/* ================= TEAMS ================= */
-
-const teams=[
-  {
-    name:"TOGB",
-    code:"TO",
-    color:"#F4C430",
-    w:0,d:0,l:0,gf:0,ga:0
-  },
-  {
-    name:"SoccerBoys",
-    code:"SB",
-    color:"#4EA35C",
-    w:0,d:0,l:0,gf:0,ga:0
-  },
-  {
-    name:"CVV",
-    code:"CV",
-    color:"#D14E4E",
-    w:0,d:0,l:0,gf:0,ga:0
-  },
-  {
-    name:"BVCB",
-    code:"BV",
-    color:"#4FA3E0",
-    w:0,d:0,l:0,gf:0,ga:0
-  }
-]
-.map(t=>({
-  ...t,
-  pts:t.w*3+t.d,
-  gd:t.gf-t.ga
-}))
-.sort(
-  (a,b)=>
-    b.pts-a.pts||
-    b.gd-a.gd||
-    b.gf-a.gf
-);
-
-
-/* ================= RESULTS ================= */
-
-const results=[
-  {
-    home:"TOGB",
-    away:"CVV",
-    hs:0,
-    as:0
-  },
-  {
-    home:"BVCB",
-    away:"SoccerBoys",
-    hs:0,
-    as:0
-  },
-  {
-    home:"CVV",
-    away:"BVCB",
-    hs:0,
-    as:0
-  },
-  {
-    home:"SoccerBoys",
-    away:"TOGB",
-    hs:0,
-    as:0
-  }
-];
-
-
-/* ================= UPCOMING ================= */
-
-const upcoming=[
-  {
-    day:"Nog Geen Bevestiging · (tijd)",
-    home:"TOGB",
-    away:"CVV"
-  },
-  {
-    day:"Nog Geen Bevestiging · (tijd)",
-    home:"BVCB",
-    away:"SoccerBoys"
-  },
-  {
-    day:"Nog Geen Bevestiging · (tijd)",
-    home:"CVV",
-    away:"BVCB"
-  },
-  {
-    day:"Nog Geen Bevestiging · (tijd)",
-    home:"SoccerBoys",
-    away:"TOGB"
-  }
-];
-
-
-/* ================= SCORERS ================= */
-
-const scorers=[
-  {
-    name:"leeg",
-    team:"TOGB",
-    goals:0
-  },
-  {
-    name:"leeg",
-    team:"SoccerBoys",
-    goals:0
-  },
-  {
-    name:"leeg",
-    team:"BVCB",
-    goals:0
-  },
-  {
-    name:"leeg",
-    team:"CVV",
-    goals:0
-  },
-  {
-    name:"leeg",
-    team:"TOGB",
-    goals:0
-  }
-];
-
-
-const teamColor=name=>
-  (teams.find(t=>t.name===name)||{}).color||"#888";
-
-const teamCode=name=>
-  (teams.find(t=>t.name===name)||{}).code||"???";
-
-
-/* ================= QUICK STATS ================= */
-
-const gamesPlayed=
-  teams.reduce(
-    (sum,t)=>
-      sum+t.w+t.d+t.l,
-    0
-  )/2;
-
-const totalGoals=
-  teams.reduce(
-    (sum,t)=>sum+t.gf,
-    0
-  );
-
-const avgGoals=
-  (totalGoals/gamesPlayed).toFixed(1);
-
-
-document.getElementById(
-  "stats-strip"
-).innerHTML=`
-
-  <div class="stat-cell">
-
-    <div
-      class="stat-value"
-      data-target="${gamesPlayed}"
-      id="stat-games"
-    >
-      0
-    </div>
-
-    <div class="stat-label">
-      Wedstrijden
-    </div>
-
-  </div>
-
-
-  <div class="stat-cell">
-
-    <div
-      class="stat-value"
-      data-target="${totalGoals}"
-      id="stat-goals"
-    >
-      0
-    </div>
-
-    <div class="stat-label">
-      Goals totaal
-    </div>
-
-  </div>
-
-
-  <div class="stat-cell">
-
-    <div
-      class="stat-value"
-      id="stat-avg"
-    >
-      0.0
-    </div>
-
-    <div class="stat-label">
-      Gem. per duel
-    </div>
-
-  </div>
-
-`;
-
-
-/* ================= COUNT UP ================= */
-
-function countUp(
-  el,
-  target,
-  decimals=0,
-  duration=700
-){
-
-  const start=performance.now();
-
-  function tick(now){
-
-    const progress=
-      Math.min(
-        (now-start)/duration,
-        1
-      );
-
-    const eased=
-      1-Math.pow(
-        1-progress,
-        3
-      );
-
-    const value=
-      target*eased;
-
-
-    el.textContent=
-      decimals
-      ?value.toFixed(decimals)
-      :Math.round(value);
-
-
-    if(progress<1){
-
-      requestAnimationFrame(tick);
-
-    }else{
-
-      el.textContent=
-        decimals
-        ?target.toFixed(decimals)
-        :target;
-
-    }
-
-  }
-
-  requestAnimationFrame(tick);
-
-}
-
-
-countUp(
-  document.getElementById("stat-games"),
-  gamesPlayed,
-  0
-);
-
-countUp(
-  document.getElementById("stat-goals"),
-  totalGoals,
-  0
-);
-
-countUp(
-  document.getElementById("stat-avg"),
-  parseFloat(avgGoals),
-  1
-);
-
-
-/* ================= STANDINGS ================= */
-
-const standingsBody=
-  document.getElementById(
-    "standings-body"
-  );
-
-
-teams.forEach((t,i)=>{
-
-  const pos=i+1;
-
-  const tr=
-    document.createElement("tr");
-
-
-  if(pos<=1)
-    tr.classList.add("zone-cup");
-
-  if(pos>=4)
-    tr.classList.add("zone-drop");
-
-
-  tr.innerHTML=`
-
-    <td>
-      <span class="pos">
-        ${pos}
-      </span>
-    </td>
-
-    <td class="team-col">
-
-      <span
-        class="crest"
-        style="background:${t.color}"
-      >
-        ${t.code.slice(0,2)}
-      </span>
-
-      ${t.name}
-
-    </td>
-
-    <td>${t.w}</td>
-    <td>${t.d}</td>
-    <td>${t.l}</td>
-
-    <td>
-      ${t.gd>0?"+"+t.gd:t.gd}
-    </td>
-
-    <td class="pts">
-      ${t.pts}
-    </td>
-
-  `;
-
-
-  standingsBody.appendChild(tr);
-
-});
-
-
-/* ================= RESULTS ================= */
-
-const resultsList=
-  document.getElementById(
-    "results-list"
-  );
-
-
-results.forEach(r=>{
-
-  const div=
-    document.createElement("div");
-
-  div.className="fixture";
-
-
-  div.innerHTML=`
-
-    <span class="home">
-      ${r.home}
-    </span>
-
-    <span class="score">
-      ${r.hs} – ${r.as}
-    </span>
-
-    <span class="away">
-      ${r.away}
-    </span>
-
-  `;
-
-
-  resultsList.appendChild(div);
-
-});
-
-
-/* ================= UPCOMING ================= */
-
-const upcomingList=
-  document.getElementById(
-    "upcoming-list"
-  );
-
-let lastDay="";
-
-
-upcoming.forEach(u=>{
-
-  if(u.day!==lastDay){
-
-    const dayLabel=
-      document.createElement("div");
-
-    dayLabel.className="fixture-day";
-
-    dayLabel.textContent=u.day;
-
-    upcomingList.appendChild(dayLabel);
-
-    lastDay=u.day;
-
-  }
-
-
-  const div=
-    document.createElement("div");
-
-  div.className="fixture";
-
-
-  div.innerHTML=`
-
-    <span class="home">
-      ${u.home}
-    </span>
-
-    <span class="score tbd">
-      VS
-    </span>
-
-    <span class="away">
-      ${u.away}
-    </span>
-
-  `;
-
-
-  upcomingList.appendChild(div);
-
-});
-
-
-/* ================= SCORERS ================= */
-
-const scorersList=
-  document.getElementById(
-    "scorers-list"
-  );
-
-const maxGoals=
-  Math.max(
-    ...scorers.map(
-      s=>s.goals
-    )
-  );
-
-
-scorers.forEach((s,i)=>{
-
-  const div=
-    document.createElement("div");
-
-  div.className="scorer-row";
-
-  div.style.flexWrap="wrap";
-
-
-  /* voorkomen van NaN wanneer alle goals 0 zijn */
-  const percentage=
-    maxGoals>0
-    ?(s.goals/maxGoals*100).toFixed(0)
-    :0;
-
-
-  div.innerHTML=`
-
-    <span class="scorer-rank">
-      ${i+1}
-    </span>
-
-    <span
-      class="crest"
-      style="background:${teamColor(s.team)}"
-    >
-      ${teamCode(s.team).slice(0,2)}
-    </span>
-
-    <span class="scorer-info">
-
-      <div class="scorer-name">
-        ${s.name}
-      </div>
-
-      <div class="scorer-team">
-        ${s.team}
-      </div>
-
-      <div class="goal-bar-track">
-
-        <div
-          class="goal-bar-fill"
-          style="width:${percentage}%"
-        ></div>
-
-      </div>
-
-    </span>
-
-    <span class="scorer-goals">
-      ${s.goals}
-    </span>
-
-  `;
-
-
-  scorersList.appendChild(div);
-
-});
-
-
-/* ================= NAV ================= */
-
-document
-.querySelectorAll("nav button")
-.forEach(btn=>{
-
-  btn.addEventListener(
-    "click",
-    ()=>{
-
-      playClickSound();
-
-      document
-        .querySelectorAll("nav button")
-        .forEach(
-          b=>b.classList.remove("active")
-        );
-
-      document
-        .querySelectorAll(".view")
-        .forEach(
-          v=>v.classList.remove("active")
+      const div =
+        document.createElement(
+          'div'
         );
 
 
-      btn.classList.add("active");
+      div.className =
+        'fixture';
 
 
-      document
-        .getElementById(btn.dataset.view)
-        .classList.add("active");
+      div.innerHTML = `
+
+        <span class="home">
+          ${u.home}
+        </span>
+
+        <span class="score tbd">
+          VS
+        </span>
+
+        <span class="away">
+          ${u.away}
+        </span>
+
+      `;
+
+
+      upcomingList.appendChild(
+        div
+      );
 
     }
   );
 
-});
+
+  /* ==================================================
+     TOPSCORERS
+     ================================================== */
+
+  const scorersList =
+    document.getElementById(
+      'scorers-list'
+    );
 
 
-/* ================= FIXTURE SOUND ================= */
+  const maxGoals =
+    Math.max(
+      ...scorers.map(
+        s => s.goals
+      )
+    );
 
-document.addEventListener(
-  "click",
-  e=>{
 
-    if(e.target.closest(".fixture")){
+  scorers.forEach(
+    (s,i) => {
 
-      playClickSound(
-        520,
-        .05,
-        .07
+      const div =
+        document.createElement(
+          'div'
+        );
+
+
+      div.className =
+        'scorer-row';
+
+
+      div.style.flexWrap =
+        'wrap';
+
+
+      const percentage =
+        maxGoals > 0
+          ? (
+              s.goals /
+              maxGoals *
+              100
+            ).toFixed(0)
+          : 0;
+
+
+      div.innerHTML = `
+
+        <span class="scorer-rank">
+          ${i + 1}
+        </span>
+
+
+        <span
+          class="crest"
+          style="background:${teamColor(s.team)}"
+        >
+          ${teamCode(s.team).slice(0,2)}
+        </span>
+
+
+        <span class="scorer-info">
+
+          <div class="scorer-name">
+            ${s.name}
+          </div>
+
+          <div class="scorer-team">
+            ${s.team}
+          </div>
+
+          <div class="goal-bar-track">
+
+            <div
+              class="goal-bar-fill"
+              style="width:${percentage}%"
+            ></div>
+
+          </div>
+
+        </span>
+
+
+        <span class="scorer-goals">
+          ${s.goals}
+        </span>
+
+      `;
+
+
+      scorersList.appendChild(
+        div
       );
 
     }
+  );
 
-  }
-);
+
+  /* ==================================================
+     NAVIGATIE
+     ================================================== */
+
+  document
+    .querySelectorAll('nav button')
+    .forEach(
+      btn => {
+
+        btn.addEventListener(
+          'click',
+          () => {
+
+            playClickSound();
+
+
+            document
+              .querySelectorAll(
+                'nav button'
+              )
+              .forEach(
+                b =>
+                  b.classList.remove(
+                    'active'
+                  )
+              );
+
+
+            document
+              .querySelectorAll(
+                '.view'
+              )
+              .forEach(
+                v =>
+                  v.classList.remove(
+                    'active'
+                  )
+              );
+
+
+            btn.classList.add(
+              'active'
+            );
+
+
+            document
+              .getElementById(
+                btn.dataset.view
+              )
+              .classList.add(
+                'active'
+              );
+
+          }
+        );
+
+      }
+    );
+
+
+  /* ==================================================
+     TAP-GELUID OP WEDSTRIJDEN
+     ================================================== */
+
+  document.addEventListener(
+    'click',
+    e => {
+
+      if(
+        e.target.closest(
+          '.fixture'
+        )
+      ){
+
+        playClickSound(
+          520,
+          0.05,
+          0.07
+        );
+
+      }
+
+    }
+  );
 
 </script>
 
