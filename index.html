@@ -3037,6 +3037,11 @@ onAuthStateChanged(
       currentAccountId =
         null;
 
+      if(accountsRealtimeUnsubscribe){
+        accountsRealtimeUnsubscribe();
+        accountsRealtimeUnsubscribe = null;
+      }
+
       document
       .getElementById(
         'app-content'
@@ -3086,6 +3091,11 @@ onAuthStateChanged(
         false,
         user.uid
       );
+
+      // Start de accounts-listener pas nadat Firebase Authentication
+      // bevestigt dat de gebruiker is ingelogd. De Firestore Rules
+      // vereisen namelijk request.auth != null voor accounts reads.
+      startAccountsRealtime();
 
       /*
         Als Firebase al geladen was voordat de gebruiker zichtbaar werd,
@@ -3437,7 +3447,15 @@ function renderTopScorers(){
    FIREBASE REALTIME LEDEN + TOPSCORERS
 ======================================================= */
 
-onSnapshot(
+let accountsRealtimeUnsubscribe = null;
+
+function startAccountsRealtime(){
+
+  if(accountsRealtimeUnsubscribe){
+    accountsRealtimeUnsubscribe();
+  }
+
+  accountsRealtimeUnsubscribe = onSnapshot(
   query(
     accountsCol,
     orderBy(
@@ -3586,6 +3604,8 @@ onSnapshot(
 
   }
 );
+
+}
 
 /* =======================================================
    LEDEN CLICK
