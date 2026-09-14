@@ -1206,6 +1206,39 @@ footer{
   text-transform:uppercase;
 }
 
+.profile-private-info{
+  margin-top:14px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.profile-detail-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:9px 10px;
+  background:rgba(8,27,51,.32);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:9px;
+}
+
+.profile-detail-label{
+  font-size:10.5px;
+  color:var(--chalk-dim);
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.profile-detail-value{
+  min-width:0;
+  text-align:right;
+  font-size:12px;
+  color:var(--chalk);
+  overflow-wrap:anywhere;
+}
+
 .profile-stats-strip{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -1667,6 +1700,17 @@ window.playClickSound =
       <div
         class="profile-club-badge"
         id="profile-view-club">
+      </div>
+
+      <div id="profile-private-info" class="profile-private-info" style="display:none;">
+        <div id="profile-view-email-row" class="profile-detail-row" style="display:none;">
+          <span class="profile-detail-label">E-mail</span>
+          <span class="profile-detail-value" id="profile-view-email"></span>
+        </div>
+        <div id="profile-view-birthdate-row" class="profile-detail-row" style="display:none;">
+          <span class="profile-detail-label">Geboortedatum</span>
+          <span class="profile-detail-value" id="profile-view-birthdate"></span>
+        </div>
       </div>
 
       <div class="profile-stats-strip">
@@ -2187,6 +2231,74 @@ const accountsCol =
   collection(
     db,
     'accounts'
+  );
+
+/* =======================================================
+   FIREBASE LEDEN-INFORMATIE TOEGANG
+
+   Pas in Firestore het document aan:
+   settings / memberVisibility
+
+   Voorbeeldvelden:
+   allowAllMembers: true
+   allowedViewerIds: ["ACCOUNT_ID_1", "ACCOUNT_ID_2"]
+   showName: true
+   showClub: true
+   showPhoto: true
+   showStats: true
+   showEmail: false
+   showBirthdate: false
+
+   Als allowAllMembers false is, kunnen alleen de account-ID's
+   uit allowedViewerIds de profielen van andere leden openen.
+======================================================= */
+
+const memberVisibilityRef =
+  doc(
+    db,
+    'settings',
+    'memberVisibility'
+  );
+
+let memberVisibilitySettings = {
+  allowAllMembers: true,
+  allowedViewerIds: [],
+  showName: true,
+  showClub: true,
+  showPhoto: true,
+  showStats: true,
+  showEmail: false,
+  showBirthdate: false
+};
+
+const memberVisibilityUnsubscribe =
+  onSnapshot(
+    memberVisibilityRef,
+    snapshot => {
+
+      if(snapshot.exists()){
+        memberVisibilitySettings = {
+          ...memberVisibilitySettings,
+          ...snapshot.data()
+        };
+      }
+      else{
+        memberVisibilitySettings = {
+          allowAllMembers: true,
+          allowedViewerIds: [],
+          showName: true,
+          showClub: true,
+          showPhoto: true,
+          showStats: true,
+          showEmail: false,
+          showBirthdate: false
+        };
+      }
+
+    },
+    err => {
+      console.error('Firebase privacy-instellingen fout:', err);
+    }
   );
 
 const VALID_CLUBS = [
@@ -3527,12 +3639,48 @@ function showProfileViewMode(){
 
 }
 
+function canCurrentUserViewMemberInfo(){
+
+  if(!currentAccountId) return false;
+
+  if(memberVisibilitySettings.allowAllMembers !== false){
+    return true;
+  }
+
+  const allowed =
+    Array.isArray(memberVisibilitySettings.allowedViewerIds)
+      ? memberVisibilitySettings.allowedViewerIds
+      : [];
+
+  return allowed.includes(currentAccountId);
+
+}
+
+function formatBirthdate(value){
+
+  if(!value) return '';
+
+  const parts = String(value).split('-');
+
+  if(parts.length === 3){
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+
+  return String(value);
+
+}
+
 function openProfile(id){
 
   const a =
     accountsCache[id];
 
   if(!a) return;
+
+  if(id !== currentAccountId && !canCurrentUserViewMemberInfo()){
+    alert('Je hebt geen toestemming om de profielen van andere leden te bekijken.');
+    return;
+  }
 
   currentProfileId =
     id;
@@ -3542,14 +3690,30 @@ function openProfile(id){
     'profile-view-name'
   )
   .textContent =
-    `${a.firstname} ${a.lastname}`;
+    memberVisibilitySettings.showName !== false
+      ? `${a.firstname || ''} ${a.lastname || ''}`.trim()
+      : 'Lid';
 
   document
   .getElementById(
     'profile-view-club'
   )
   .textContent =
-    a.club;
+    memberVisibilitySettings.showClub !== false
+      ? (a.club || '')
+      : '';
+
+  const photoWrap = document.querySelector('.profile-photo-wrap');
+  if(photoWrap){
+    photoWrap.style.display =
+      memberVisibilitySettings.showPhoto !== false ? 'flex' : 'none';
+  }
+
+  const statsStrip = document.querySelector('.profile-stats-strip');
+  if(statsStrip){
+    statsStrip.style.display =
+      memberVisibilitySettings.showStats !== false ? 'grid' : 'none';
+  }
 
   document
   .getElementById(
@@ -3581,6 +3745,19 @@ function openProfile(id){
     ),
     a
   );
+
+  const emailRow = document.getElementById('profile-view-email-row');
+  const birthdateRow = document.getElementById('profile-view-birthdate-row');
+  const privateInfo = document.getElementById('profile-private-info');
+
+  const showEmail = memberVisibilitySettings.showEmail === true;
+  const showBirthdate = memberVisibilitySettings.showBirthdate === true;
+
+  emailRow.style.display = showEmail && a.email ? 'flex' : 'none';
+  birthdateRow.style.display = showBirthdate && a.birthdate ? 'flex' : 'none';
+  document.getElementById('profile-view-email').textContent = a.email || '';
+  document.getElementById('profile-view-birthdate').textContent = formatBirthdate(a.birthdate);
+  privateInfo.style.display = (emailRow.style.display === 'flex' || birthdateRow.style.display === 'flex') ? 'flex' : 'none';
 
   const isOwn =
     id === currentAccountId;
