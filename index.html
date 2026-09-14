@@ -2682,37 +2682,6 @@ document
 
     try{
 
-      /*
-        Eerst controle op dubbele naam.
-        De echte identiteit wordt daarna door Firebase Auth
-        vastgesteld met een unieke Firebase UID.
-      */
-      const dupSnap =
-        await getDocs(
-          query(
-            accountsCol,
-            where(
-              'firstnameLower',
-              '==',
-              firstnameLower
-            ),
-            where(
-              'lastnameLower',
-              '==',
-              lastnameLower
-            )
-          )
-        );
-
-      if(!dupSnap.empty){
-
-        showAuthError(
-          'Er bestaat al een account met deze voor- en achternaam.'
-        );
-
-        return;
-      }
-
       const credential =
         await createUserWithEmailAndPassword(
           auth,
@@ -2802,9 +2771,18 @@ document
       else if(code === 'auth/weak-password'){
         showAuthError('Het wachtwoord is te zwak. Gebruik minimaal 6 tekens.');
       }
+      else if(code === 'auth/operation-not-allowed'){
+        showAuthError('Registratie via e-mail en wachtwoord staat nog uit in Firebase Authentication. Zet Email/Password aan bij Authentication → Sign-in method.');
+      }
+      else if(code === 'auth/network-request-failed'){
+        showAuthError('Er is een netwerkfout. Controleer je internetverbinding en probeer opnieuw.');
+      }
+      else if(code === 'auth/invalid-api-key'){
+        showAuthError('De Firebase API-key/configuratie klopt niet. Controleer de Firebase-configuratie in dit HTML-bestand.');
+      }
       else{
         showAuthError(
-          'Account aanmaken mislukt. Controleer Firebase Authentication en probeer het opnieuw.'
+          `Account aanmaken mislukt (${code || 'onbekende fout'}). Controleer Firebase Authentication en de browserconsole.`
         );
       }
 
